@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name : restart-policy
+  labels:
+    app: restart-policy
+spec: 
+  restartPolicy: Never  # Always , Never and OnFailure   # remember restart policy is a part of spec but it is for the container restart :)
+  containers:
+    - name: ubuntu
+      image: ubuntu
+   
+   
+
+
+# This pod will always restart if it fails.
+# The restart policy can be set to Always, OnFailure, or Never.
+# Always: The container will be restarted regardless of the exit status.
+# OnFailure: The container will be restarted only if it exits with a non-zero status.
+# Never: The container will not be restarted regardless of the exit status.
+# The default restart policy is Always. Since kubelet is always running, it will always  try to restart the container which gives status as CrashLoopBackOff even after contianer exits successfully.
+
+
+# if we run like docker run iginx it will run forever since its server
+# but if we run like docker run ubuntu  it will exit successfully immediately since we haven't provided any command 
+# so the restart policy will be applied to the container
+
+
+# => watch -t kubectl get pods (where -t is we don't need title bar)
+
+# try withot restart policy
+# command to run the pod
+# => kubectl create -f restart-policy.yaml and observe the status over watch terminal
+
+# status will be completed ...
+# but since restat policy is not set, it will by default take value as Always
+# Howvever this kubelet is trained to run the container again and again
+# It will give status as CrashLoopBackOff even after container exits successfully and shows the status as Completed but soon it retires and give status as CrashLoopBackOff
+
+# => kubectl delete -f part02-pods/05-restart-policy.yaml 
+
+#  watch with restart policy
+# => kubectl create -f restart-policy.yaml and observe the status over watch terminal
+#  now it won't go to CrashLoopBackOff since restartpolicy is set to Never
+# => kubectl get pod -o yaml
+
+
+# Pods Status :  
+# Pending  => Node is yet to be assigned 
+# ContainerCreating  => Kubelet is working on creating the container 
+# Running  => Kubelet started the container 
+# ErrImage / ImagePullBackOff => Failed pulling the image / Kubelet will try after some delays
+# Completed => Container exited successfully
+# Error => Container exited with some error
+# CrashLoopBackOff => There is a problem in running the container. Kubelet is retrying with delays(no issue in pulling the image)  
+# Terminating => Pod is getting deleted 
