@@ -12,3 +12,15 @@ spec:
 # kind:
 # metadata:
 # spec:
+
+# kubectl create -f 01-simple-pod.yaml before this create the cluster
+
+# Pods Status :  
+# Pending  => Node is yet to be assigned 
+# ContainerCreating  => Kubelet is working on creating the container 
+# Running  => Kubelet started the container 
+# ErrImage / ImagePullBackOff => Failed pulling the image / Kubelet will try after some delays
+# Completed => Container exited successfully
+# Error => Container exited with some error
+# CrashLoopBackOff => There is a problem in running the container. Kubelet is retrying with delays(no issue in pulling the image)  
+# Terminating => Pod is getting deleted 

@@ -35,3 +35,27 @@
 # Terminating => Pod is getting deleted 
 
 
+#  Create the pods with dept dev which has  team development-1 and development-2
+#  Create the pods with dept test which has team testing-1 and testing-2
+
+#  create the pods
+=> kubectl create -f part02-pods/03-multiple-pods.yaml
+
+=> kubectl describe pod (will describe all the pods created)
+=> kubectl describe pod nginx-pod
+=> kubectl describe pod nginx-pod2
+=> kubectl describe pod nginx-pod3
+=> kubectl describe pod nginx-pod4
+=> verify one by one
+=> kubectl get pod nginx-pod
+
+#  get all the pods labels 
+=> kubectl get pods --show-labels
+
+#  get the pods with specific labels with -l flag 
+=> kubectl get pods -l dept=dev
+=> kubectl get pods -l dept=test
+=> kubectl get pods -l dept=dev,team=development-1
+=> kubectl get pods -l dept=dev,team=development-2
+
+
