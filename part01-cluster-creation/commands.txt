@@ -1,23 +1,23 @@
- kind create cluster --config 01-cluster.yaml 
+ => kind create cluster --config 01-cluster.yaml 
 
- ls ~/.kube 
+ => ls ~/.kube 
 
- docker ps (verify the cluster)
+ => docker ps (verify the cluster)
 
- kubectl get nodes
+ => kubectl get nodes
 
 # for Master node 
- docker ps 
- docker exec -it 3e24 bash
- cd /etc/kubernetes/manifests  => etcd.yaml  kube-apiserver.yaml  kube-controller-manager.yaml  kube-scheduler.yaml
- ps -aux (process currently ruuning inside the containers)
- exit
+ => docker ps 
+ => docker exec -it 3e24 bash
+ => cd /etc/kubernetes/manifests  => etcd.yaml  kube-apiserver.yaml  kube-controller-manager.yaml  kube-scheduler.yaml
+ => ps -aux (process currently ruuning inside the containers)
+ => exit
 
  # for worker node 
- docker ps 
- docker exec -it 2f6c0b bash
- ps -aux 
- exit 
+ => docker ps 
+ => docker exec -it 2f6c0b bash
+ => ps -aux 
+ => exit 
 
 
 

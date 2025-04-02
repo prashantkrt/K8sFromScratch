@@ -1,0 +1,23 @@
+#  Step1 Create the cluster:
+=> kind create cluster --config 01-cluster.yaml
+
+#  verify cluster
+=> kubectl get nodes or kubectl get node
+
+#  verify pod if any
+=> kubectl get pods or kubectl get pods 
+
+#  Better use watch command to check the status in fixed intervals
+#  Runs a command repeatedly at a fixed interval (default: 2 seconds).
+#  Useful for monitoring changes in real-time.
+=> watch -t kubectl get pods (where -t is we don't need title bar)
+
+#  create pod
+=> kubectl create -f 01-simple-pod.yaml
+
+#  verify
+=> kubectl get pod
+
+#  delete pod
+=> kubectl delete -f 01-simple-pod.yaml
+
