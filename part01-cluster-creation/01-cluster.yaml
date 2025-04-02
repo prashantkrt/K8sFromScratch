@@ -9,3 +9,11 @@ nodes:
 
 # kind create cluster --config 01-cluster.yaml 
 # docker ps (verify the cluster)
+
+# kind get clusters (list all clusters)
+# kind get clusters --name dev-cluster (list specific cluster)
+# kind delete cluster --name dev-cluster
+# docker ps (verify)
+
+# ~/.kube/config (kubeconfig file) you won't see info now in this file as we have delete the cluster
+
