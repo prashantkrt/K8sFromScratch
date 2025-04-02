@@ -46,7 +46,7 @@
 => kubectl describe pod nginx-pod2
 => kubectl describe pod nginx-pod3
 => kubectl describe pod nginx-pod4
-=> verify one by one
+#  verify one by one
 => kubectl get pod nginx-pod
 
 #  get all the pods labels 
