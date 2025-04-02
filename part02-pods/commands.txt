@@ -58,4 +58,16 @@
 => kubectl get pods -l dept=dev,team=development-1
 => kubectl get pods -l dept=dev,team=development-2
 
+# using get , fetct the little detailed or extra info 
+=> kubectl get pods -o wide
+=> kubectl get pod nginx-pod -o wide
+=> kubectl get pod -l dept=dev -o wide
+
+# formatting output to yaml
+=> kubectl get pods -o yaml
+
+# delete the pod 
+kubectl delete pod nginx-pod 
+kubectl delete pod/nginx-pod # both works somewhere we can see this commnds also
+kubectl delete pod -l dept=dev
 
