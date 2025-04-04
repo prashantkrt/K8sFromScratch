@@ -28,7 +28,7 @@ spec:
 
 # => watch -t kubectl get pods (where -t is we don't need title bar)
 
-# try withot restart policy
+# try without restart policy
 # command to run the pod
 # => kubectl create -f restart-policy.yaml and observe the status over watch terminal
 
