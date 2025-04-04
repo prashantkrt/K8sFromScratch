@@ -46,6 +46,7 @@
 => kubectl describe pod nginx-pod2
 => kubectl describe pod nginx-pod3
 => kubectl describe pod nginx-pod4
+
 #  verify one by one
 => kubectl get pod nginx-pod
 
@@ -58,7 +59,7 @@
 => kubectl get pods -l dept=dev,team=development-1
 => kubectl get pods -l dept=dev,team=development-2
 
-#  using get , fetct the little detailed or extra info 
+#  using get , fetch the little more detail or extra info 
 => kubectl get pods -o wide
 => kubectl get pod nginx-pod -o wide
 => kubectl get pod -l dept=dev -o wide
@@ -74,3 +75,17 @@
 
 #  logs 
 => kubtectl logs ubuntu-pod
+
+#  Access the running pod
+=> kubectl create -f 01-basic.yaml 
+=> kubectl get pod nginx-pod
+=> kubectl exec -it nginx-pod bash (depricated) we have to use -- [COMMAND]
+=> kubectl exec -it nginx-pod -- bin/bash or -- bash
+=> ls 
+=> exit
+
+#  Multiple Containers in pod
+=> kubectl logs multi-container-pod -c ubuntu
+=> kubectl logs multi-container-pod -c nginx
+=> kubectl exec -it multi-container-pod -c ubuntu -- /bin/bash
+=> kubectl exec -it multi-container-pod -c nginx -- /bin/bash

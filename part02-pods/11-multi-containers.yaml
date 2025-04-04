@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multi-container-pod
+spec: 
+  restartPolicy: Never
+  terminationGracePeriodSeconds: 1
+  containers: 
+    - name: ubuntu
+      image: ubuntu
+      command: ["/bin/bash", "-c", "echo hello world && sleep 3600"]
+    - name: nginx
+      image: nginx
+      ports:
+        - name: web
+          containerPort: 80
+          protocol: TCP
+
+
+
+
+# Commands 
+# => kubectl create -f 11-multi-containers.yaml
+# => kubectl get pods
+# => kubectl logs multi-container-pod
+# => kubectl port-forward multi-container-pod 8080:80
+# => http://localhost:8080
+
+# => kubectl delete -f 11-multi-containers.yaml
+# => kubectl get pods
+
+# => kubectl describe pod multi-container-pod
+# => kubectl logs multi-container-pod -c ubuntu 
+# => kubectl logs multi-container-pod -c nginx
+
+# => kubectl describe pod multi-container-pod
+
+
+# => kubectl exec -it multi-container-pod -c ubuntu -- /bin/bash
+# => kubectl exec -it multi-container-pod -c nginx -- /bin/bash
