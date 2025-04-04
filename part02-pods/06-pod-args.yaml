@@ -1,11 +1,95 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: nginx-pod
+  name: ubuntu-pod-1
 spec:
+  restartPolicy: Never
   containers:
-    - name: nginx
-      image: nginx
+  - name: ubuntu
+    image: ubuntu
+    args: 
+    - "date"
+    # The above args are equivalent to the following command:
+    # command:
+    #   - date
+    # The container will run the command:
+    # date
+    # Expected Behavior:
+    # When the container starts, it prints the current date and time.
+    # After that, the container exits (since restartPolicy: Never, Kubernetes will not restart it).
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ubuntu-pod-2
+spec:
+  restartPolicy: Never
+  containers:
+    - name: ubuntu-container
+      image: ubuntu
+      args:
+        - /bin/bash  # /bin/bash: Specifies that the container should run the Bash shell.
+        - -c         # Tells Bash to execute the following string as a command.
+        - |          # The next part (| is just YAML syntax for multiline strings):
+          echo "Hello from the container"
+          sleep 3600     # status will be running for 1 hour (3600 seconds)     
 
 
       
+ # Note :
+ # Entrypoint in Docker => Command in Kubernetes
+ # CMD in Docker => Args in Kubernetes      
+
+ # Remember 
+ # Entrypoint in Docker is the command that runs when the container starts.
+ # CMD in Docker is the default arguments to the entrypoint command.
+
+ # Similary in Kubernetes
+ # Command in Kubernetes is the command that runs when the container starts.
+ # Args in Kubernetes is the default arguments to the command.
+
+# The above args are equivalent to the following command:
+# command:
+#   - /bin/bash
+#   - -c
+#   - |
+#     echo "Hello from the container"
+#     sleep 3600
+# 
+# The container will run the command:
+# /bin/bash -c "echo 'Hello from the container'; sleep 3600"
+
+# Expected Behavior:
+# When the container starts, it prints "Hello from the container".
+# It then sleeps for 1 hour (3600 seconds).
+# After 1 hour, the container exits (since restartPolicy: Never, Kubernetes will not restart it). 
+
+  # args:
+  #       - /bin/bash
+  #       - -c
+  #       - |
+  #         echo "Hello from the container"
+  #         echo "Listing files in the current directory:"
+  #         ls -la   # Lists files including hidden ones with details
+  #         sleep 3600
+
+
+
+  # Command:
+
+  # Kubectl create -f 06-pod-args.yaml
+  # Kubectl get pods
+  # Kubectl describe pod ubuntu-pod-2
+
+  # kubectl logs ubuntu-pod-1  => Fri Apr  4 14:37:58 UTC 2025
+  # Kubectl logs ubuntu-pod-2  => Hello from the container
+
+  # kubectl delete pod ubuntu-pod-1
+  # kubectl delete pod ubuntu-pod-2
+  # kubectl get pods
+  # kubectl delete pod ubuntu-pod-1 ubuntu-pod-2
+
+  # kubectl delete pod --all  (delete the pods if any)
+
+ 
