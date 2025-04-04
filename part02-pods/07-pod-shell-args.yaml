@@ -17,7 +17,7 @@ spec:
 # =>  kubtectl logs ubuntu-pod
 # output This is a path /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-#Note :  Bash only considers one command after -c.
+# Note :  Bash only considers one command after -c.
 #       - echo "Hello from the container"
 
 # if wanted to run multiple commands post -c
