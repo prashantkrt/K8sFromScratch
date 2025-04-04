@@ -7,7 +7,7 @@ spec:
   containers:
   - name: ubuntu
     image: ubuntu
-    args: 
+    args: # like CMD in Docker
     - "date"
     # The above args are equivalent to the following command:
     # command:
@@ -38,6 +38,11 @@ spec:
 
       
  # Note :
+ # Command is like Entrypoint 
+ # Args is like CMD
+ # command → Overrides the Docker ENTRYPOINT
+ # args → Overrides the Docker CMD
+
  # Entrypoint in Docker => Command in Kubernetes
  # CMD in Docker => Args in Kubernetes      
 

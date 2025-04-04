@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  restartPolicy: Never
+  terminationGracePeriodSeconds: 1
+  containers:
+    - name: ubuntu
+      image: ubuntu
+      args:    
+       -  "sleep"
+       -  "3600"
+
+
+# => kubectl delete pods --all         
+# => kubectl create -f 08-termination-grace-period.yaml
+# => kubectl get pods
+# => kubectl logs my-pod
+
+# Obersevations
+# kubectl create -f 08-termination-grace-period.yaml 
+# lets we I waneted to delete this pod 
+# kubectl delete pod my-pod
+# check the status it will be in terminating state for around 30s before deleting
+
+# for this we adjust the termination grace period
+
+# set this  terminationGracePeriodSeconds: 1 which is 1 second 
+# by default it is 30 seconds
+# so when we delete the pod it will be in terminating state for 1 second
+# and then it will be deleted
