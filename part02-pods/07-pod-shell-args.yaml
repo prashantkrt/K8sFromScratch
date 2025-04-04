@@ -10,7 +10,7 @@ spec:
      args: 
       - "/bin/bash"
       - "-c"    
-      - echo "This is a path $PATH"
+      - "echo This is a path $PATH"
      
      
 # =>  kubectl create -f 07-pod-shell-args.yaml     
@@ -24,6 +24,5 @@ spec:
 #       - |
 #         echo "Hello from the container"
 #         sleep 3600
-
 
 # we have to use - | and provide the multiple line commands 
