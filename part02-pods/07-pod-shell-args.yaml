@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ubuntu-pod
+spec:
+  restartPolicy: Never
+  containers:
+   - name: ubuntu
+     image: ubuntu
+     args: 
+      - "/bin/bash"
+      - "-c"    
+      - echo "This is a path $PATH"
+     
+     
+# =>  kubectl create -f 07-pod-shell-args.yaml     
+# =>  kubtectl logs ubuntu-pod
+# output This is a path /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+#Note :  Bash only considers one command after -c.
+#       - echo "Hello from the container"
+
+# if wanted to run multiple commands post -c
+#       - |
+#         echo "Hello from the container"
+#         sleep 3600
+
+
+# we have to use - | and provide the multiple line commands 
