@@ -7,8 +7,8 @@ spec:
   containers:
   - name: assignment
     image: vinsdocker/k8s-pod-assignment
-    env:
-      - name: NUMBER
-        value: '5'
-    args:
-    - "MY_ARG"
+    # env:
+    #   - name: NUMBER
+    #     value: '5'
+    # args:
+    # - "MY_ARG"
