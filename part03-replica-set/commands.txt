@@ -1,0 +1,24 @@
+# => watch -t kubectl get pods
+
+# => kubectl create -f 01-simple-rs.yaml
+
+# => kubectl get rs
+
+# => kubectl get pods
+# => kubectl describe rs my-rs
+
+# => kubectl scale rs my-rs --replicas=6
+
+# => kubectl get rs or kubectl get replicaset
+# => kubectl delete rs my-rs
+# => kubectl get pods
+
+# => kubectl port-forward pod/my-rs-xxxxx 8081:80
+# => kubectl port-forward pod/my-rs-yyyyy 8082:80
+# => kubectl port-forward pod/my-rs-zzzzz 8083:80
+
+# => kubectl get all (this gives all the resouces in the cluster)
+
+# => kubectl get pods --show-labels
+
+# => kubectl delete -f 01-simple-rs.yaml

@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: my-rs  
+spec:
+  replicas: 3 # it should be exactly 3 and if there is no existing pod we have to tell in the template about the pod
+  selector:
+    matchLabels:
+      app: my-app
+  template:   # if there is no exiting pod we have to tell in the template about the pod 
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
+
+
+# basic yaml file for replica set
+# apiVersion: apps/v1
+# kind: 
+# metadata:
+# spec:
+#   replicas:
+#   selector:
+#   template: for the pod
+    
+# Commands
+# => kubectl create -f 01-simple-rs.yaml
+# my-rs-8kj8w   1/1     Running   0          9s
+# my-rs-gc8k9   1/1     Running   0          9s
+# my-rs-zrc4v   1/1     Running   0          9s
+
+# => kubectl get rs
+# NAME    DESIRED   CURRENT   READY   AGE
+# my-rs   3         3         3       27s
+
+# => kubectl get pods
+# => kubectl describe rs my-rs
+# => kubectl scale rs my-rs --replicas=6
+# my-rs-6289r   1/1     Running   0          8s
+# my-rs-6vcs9   1/1     Running   0          8s
+# my-rs-8kj8w   1/1     Running   0          3m4s
+# my-rs-gc8k9   1/1     Running   0          3m4s
+# my-rs-q5bds   1/1     Running   0          8s
+# my-rs-zrc4v   1/1     Running   0          3m4s
+
+# => kubectl get rs or kubectl get replicaset
+# => kubectl delete rs my-rs
+# => kubectl get rs or replicaset
+# => kubectl get pods
+
+# => kubectl port-forward pod/my-rs-xxxxx 8081:80
+# => kubectl port-forward pod/my-rs-yyyyy 8082:80
+# => kubectl port-forward pod/my-rs-zzzzz 8083:80
+
+# => kubectl get all (this gives all the resouces in the cluster)
+
+# => kubectl get pods --show-labels
+# NAME          READY   STATUS    RESTARTS   AGE   LABELS
+# my-rs-6289r   1/1     Running   0          19m   app=my-app
+# my-rs-6vcs9   1/1     Running   0          19m   app=my-app
+# my-rs-8kj8w   1/1     Running   0          22m   app=my-app
+# my-rs-gc8k9   1/1     Running   0          22m   app=my-app
+# my-rs-q5bds   1/1     Running   0          19m   app=my-app
+# my-rs-zrc4v   1/1     Running   0          22m   app=my-app
+
+# lets say I wanted to delete one of the pods
+# => kubectl delete pod my-rs-6289r
+# Automatically a new pod will be created to match the number of repicas which is set to 6
+# => kubectl get pods   
+# NAME          READY   STATUS    RESTARTS   AGE
+# my-rs-2hw9l   1/1     Running   0          22s
+# my-rs-6vcs9   1/1     Running   0          21m
+# my-rs-8kj8w   1/1     Running   0          24m
+# my-rs-gc8k9   1/1     Running   0          24m
+# my-rs-q5bds   1/1     Running   0          21m
+# my-rs-zrc4v   1/1     Running   0          24m
+# => kubectl get rs
+# NAME    DESIRED   CURRENT   READY   AGE
+# my-rs   6         6         6       25m
+
+# => kubectl delete -f 01-simple-rs.yaml
