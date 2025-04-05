@@ -18,6 +18,16 @@ spec:
           ports:
             - containerPort: 80
 
+# note : ReplicaSet -> restartPolicy: Always , we use replicaset for server type of application
+
+# Very Very Important
+# Controller  	   Allowed restartPolicy: 
+# ReplicaSet	    : Always (only)
+# Deployment	    : Always (same as ReplicaSet)
+# Pod (standalone):	Always, OnFailure, Never
+# Job	            : OnFailure, Never
+# CronJob	        : OnFailure, Never
+
 
 # basic yaml file for replica set
 # apiVersion: apps/v1

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: my-rs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      team: team-a   # Must match the labels on the existing pods
+  template: 
+    metadata:
+      labels:
+        team: team-a
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
+
+# Commands
+# => kubectl create -f 03-existing-pod-manager.yaml
+
+# => kubectl get rs       
+
+# => kubectl delete rs my-rs

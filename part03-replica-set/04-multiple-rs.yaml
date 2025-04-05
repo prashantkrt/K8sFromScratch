@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: my-rs-1
+spec:
+ replicas: 2
+ selector:
+   matchLabels:
+     app: my-app
+ template:
+   metadata:
+     labels:
+       app: my-app
+   spec:
+     containers:
+       - name: nginx
+         image: nginx
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: my-rs-2
+spec:
+ replicas: 2
+ selector:
+   matchLabels:
+     app: my-app
+ template:
+   metadata:
+     labels:
+       app: my-app
+   spec:
+     containers:
+       - name: nginx
+         image: nginx
+---
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: my-rs-3
+spec:
+ replicas: 2
+ selector:
+   matchLabels:
+     app: my-app
+ template:
+   metadata:
+     labels:
+       app: my-app
+   spec:
+     containers:
+       - name: nginx
+         image: nginx
+              
+
+# => kubectl create -f 04-multiple-rs.yaml
+
+# observable that the pods are created with the name of the replicaset
+# => kubectl get pods
+# NAME            READY   STATUS    RESTARTS   AGE
+# my-rs-1-2wp6r   1/1     Running   0          14s
+# my-rs-1-rqlcw   1/1     Running   0          14s
+# my-rs-2-6qm9h   1/1     Running   0          14s
+# my-rs-2-mqn2v   1/1     Running   0          14s
+# my-rs-3-7spnc   1/1     Running   0          14s
+# my-rs-3-926cl   1/1     Running   0          14s
+
+# => kubectl get rs
+# NAME      DESIRED   CURRENT   READY   AGE
+# my-rs-1   2         2         2       28s
+# my-rs-2   2         2         2       28s
+# my-rs-3   2         2         2       28s
+
+# => kubectl get pods       
+# NAME            READY   STATUS    RESTARTS   AGE
+# my-rs-1-2wp6r   1/1     Running   0          51s
+# my-rs-1-rqlcw   1/1     Running   0          51s
+# my-rs-2-6qm9h   1/1     Running   0          51s
+# my-rs-2-mqn2v   1/1     Running   0          51s
+# my-rs-3-7spnc   1/1     Running   0          51s
+# my-rs-3-926cl   1/1     Running   0          51s

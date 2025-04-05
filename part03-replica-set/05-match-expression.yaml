@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: my-rs-1
+spec:
+  replicas: 2
+  selector:
+    matchExpressions:
+      - key: team
+        operator: In
+        values:
+          - team-a
+          - team-b
+  template:
+    metadata:
+      labels:
+        team: team-a   # Template creates pods with team=team-a
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+---
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: my-rs-2
+spec:
+  replicas: 2
+  selector:
+    matchExpressions:
+      - key: team
+        operator: In
+        values: ["team-a", "team-b"]
+  template:
+    metadata:
+      labels:
+        team: team-b   # Template creates pods with team=team-b
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+
+#  kubectl delete rs --all
+
+# kubectl create -f 05-match-expression.yaml 
+
+# kubectl get rs
+# my-rs-1-5qsxd   1/1     Running   0          9s
+# my-rs-1-f2x9t   1/1     Running   0          9s
+# my-rs-2-8kn6p   1/1     Running   0          9s
+# my-rs-2-rkfmh   1/1     Running   0          9s
+
+# kubectl get pods -l team=team-a
+# kubectl get pods -l team=team-b
