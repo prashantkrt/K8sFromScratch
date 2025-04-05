@@ -1,0 +1,116 @@
+kubectl create  (create)
+# Non Idempotent
+Use case: For creating resources for the first time only.
+If the resource already exists, it will throw an error.
+=> kubectl create -f my-deployment.yaml
+Error from server (AlreadyExists): error when creating "my-deployment.yaml":
+deployments.apps "my-deployment" already exists
+
+=> kubectl create -f my-deployment.yaml and then I tried to 
+=> kubectl apply -f 01-simple-deployment.yaml
+Warning: resource deployments/my-deployment is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.
+deployment.apps/my-deployment configured
+
+If you already created the resource with kubectl create, and now want to track changes:
+kubectl create --save-config -f 01-simple-deployment.yaml
+
+kubectl apply (create/Update)
+# Idempotent and safe to re-run
+Use case: For both creating and updating resources.
+Works well with declarative configuration (i.e., YAML files tracked in Git etc.)
+If the resource doesn’t exist → it creates it
+If it already exists → it updates the resource by patching changes
+Stores configuration in an annotation (kubectl.kubernetes.io/last-applied-configuration)
+Kubernetes tracks the last-applied configuration by storing it in an annotation on the resource:
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: <full YAML here>
+
+=> kubectl apply -f my-deployment.yaml
+
+Create the resource
+Automatically add the last-applied-configuration annotation
+No warning next time you apply
+
+
+
+example :  nginx-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+  labels:
+    app: my-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+
+
+kubectl apply -f nginx-deployment.yaml
+
+
+output from => kubectl get deployment my-deployment -o yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+  labels:
+    app: my-app
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {
+        "apiVersion": "apps/v1",
+        "kind": "Deployment",
+        "metadata": {
+          "name": "my-deployment",
+          "labels": {
+            "app": "my-app"
+          }
+        },
+        "spec": {
+          "replicas": 2,
+          "selector": {
+            "matchLabels": {
+              "app": "my-app"
+            }
+          },
+          "template": {
+            "metadata": {
+              "labels": {
+                "app": "my-app"
+              }
+            },
+            "spec": {
+              "containers": [
+                {
+                  "name": "nginx",
+                  "image": "nginx:1.14.2",
+                  "ports": [
+                    {
+                      "containerPort": 80
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      }
+kubectl apply auto-adds the last-applied-configuration annotation.
+
+This helps Kubernetes understand what your original YAML was, so it can diff against future changes.
+
+Stored as a minified JSON string.
