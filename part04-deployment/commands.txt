@@ -1,0 +1,23 @@
+=> watch -t kubectl get pods
+
+=> kubectl apply -f 01-simple-deployment.yaml 
+=> kubectl describe deploy 
+=> kubectl get deploy
+=> kubectl delete deploy my-deployment
+=> kubectl delete deploy --all
+
+#  Just need the deployent name 
+#  No need to specify the pod will automatically it picks one pod managed by the deployment.
+#  Just one randomly selected pod from that deployment.
+=> kubectl logs deploy/my-deployment , Logs from a single pod
+=> kubectl exec -it deploy/my-deployment -- bash , Exec into one pod
+=> kubectl port-forward deploy/my-deployment 8080:80 ,   Only one pod is selected behind the scenes, not all.
+
+# If you know the specific pod name, you can directly target that pod using all the kubectl commands
+=> kubectl logs my-deployment-6f8c8d4ff9-xyz12
+=> kubectl exec -it my-deployment-6f8c8d4ff9-xyz12 -- bash
+=> kubectl port-forward my-deployment-6f8c8d4ff9-xyz12 8080:80
+=> kubectl get pods
+=> kubectl get pods -l app=my-app
+
+## Note kubectl logs rs/my-replicaset for replicaset this will not work, incorrect command you should be knowing the pod details

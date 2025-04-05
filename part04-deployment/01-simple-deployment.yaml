@@ -34,6 +34,14 @@ spec:
 
 # Simply we use Use Deployment when we want real-world features like zero-downtime updates, rollback, and version control.
 
-
 # Command to create the deployment:
 # kubectl apply -f 01-simple-deployment.yaml
+# kubectl delete -f 01-simple-deployment.yaml
+
+# kubectl apply -f 01-simple-deployment.yaml
+# kubectl apply -f 01-simple-deployment.yaml  same command no error will come : )
+
+# kubectl describe deploy
+# kubectl get deploy
+
+# kubectl logs deploy/my-deployment

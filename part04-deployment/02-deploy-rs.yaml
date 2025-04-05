@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-order-service-deployment
+spec: 
+ replicas: 2
+ selector:
+   matchLabels:
+     app: my-order-service
+ template:
+   metadata:
+     labels:
+       app: my-order-service
+   spec:
+     containers:
+     - name: order-service-app
+       image: ubuntu
+       env:
+         - name: ENV
+           value: "production"
+       command: ["sleep"]
+       args: ["infinity"]      # bash =>  sleep infinity      
+
+
+# containers:
+#   - name: order-service-app
+#     image: ubuntu
+#     command: ["sh", "-c"]
+#     args:
+#       - |
+#         echo "ENV=$ENV"
+#         sleep infinity
+#     env:
+#       - name: ENV
+#         value: "production"
+#     ports:
+#       - containerPort: 80
+#         name: app-port
+#         protocol: TCP
+# Commands Used: 
+# => kubectl delete deploy --all
+# => kubectl apply -f 02-deploy-rs.yaml
+
+# => kubectl get deploy/my-order-service-deployment 
+# NAME                          READY   UP-TO-DATE   AVAILABLE   AGE
+# my-order-service-deployment   3/3     3            3           3m14s
+
+# => kubectl logs deploy/my-order-service-deployment 
+
+# I have changed the replicas to 2 in the deployment file and applied the changes.
+# => kubectl apply -f 02-deploy-rs.yaml
+
+# => kubectl get deploy/my-order-service-deployment
+# => kubectl logs deploy/my-order-service-deployment
