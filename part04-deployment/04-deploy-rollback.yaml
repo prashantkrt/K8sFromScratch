@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deploy-rollout
+  annotations: 
+    kubernetes.io/change-cause: "deploying v1"
+spec: 
+  replicas: 3
+  selector: 
+    matchLabels:
+      app: my-app
+  template:
+   metadata:
+      labels:
+        app: my-app
+   spec:
+      containers:
+        - name: nginx
+          image: vinsdocker/k8s-app:v1 
+          ports:
+            - containerPort: 80    
+              name: "app-port"
+
+
+# Commands used 
+# => kubectl delete deploy --all
+
+# kubernetes.io/change-cause: "deploying v1" and  image: vinsdocker/k8s-app:v1 
+# => kubectl apply -f 04-deploy-rollback.yaml
+# => kubectl port-forward deploy/my-deploy-rollout 8080:80
+# => kubectl rollout history deploy/my-deploy-rollout
+# REVISION  CHANGE-CAUSE
+# 1         deploying v1
+
+# kubernetes.io/change-cause: "deploying v2" and  image: vinsdocker/k8s-app:v2
+# => kubectl apply -f 04-deploy-rollback.yaml
+# => kubectl port-forward deploy/my-deploy-rollout 8080:80
+# => kubectl rollout history deploy/my-deploy-rollout
+# REVISION  CHANGE-CAUSE
+# 1         deploying v1
+# 2         deploying v2
+
+# kubernetes.io/change-cause: "deploying v3" and  image: vinsdocker/k8s-app:v3
+# => kubectl apply -f 04-deploy-rollback.yaml
+# => kubectl port-forward deploy/my-deploy-rollout 8080:80
+# => kubectl rollout history deploy/my-deploy-rollout
+# REVISION  CHANGE-CAUSE
+# 1         deploying v1
+# 2         deploying v2
+# 3         deploying v3
+
+# => kubeclt rollout undo deploy/my-deploy-rollout
+# => kubectl rollout history deploy/my-deploy-rollout
+# REVISION  CHANGE-CAUSE
+# 1         deploying v1
+# 3         deploying v3
+# 4         deploying v2
+
+# => kubectl rollout undo deploy/my-deploy-rollout --to-revision=1  going to revision 1
+# => kubectl rollout history deploy/my-deploy-rollout
+# REVISION  CHANGE-CAUSE
+# 3         deploying v3
+# 4         deploying v2
+# 5         deploying v1
+
+
+# => kubectl rollout undo deploy/my-deploy-rollout --to-revision=3  going to revision 3
+# => kubectl rollout history deploy/my-deploy-rollout
+# REVISION  CHANGE-CAUSE
+# 4         deploying v2
+# 5         deploying v1
+# 6         deploying v3
+
+
+
+

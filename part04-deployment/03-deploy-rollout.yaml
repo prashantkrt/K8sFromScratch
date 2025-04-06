@@ -22,6 +22,7 @@ spec:
 # => kubectl delete deploy --all       
 
 # => kubectl apply -f 03-deploy-rollout.yaml   
+
 # => kubectl logs deploy/my-deploy-rollout 
 
 # => kubectl port-forward deploy/my-deploy-rollout 8080:80
@@ -59,11 +60,89 @@ spec:
 #   Tolerations:  <none>
 
 # My deployment is running v3
-# => kubectl rollout undo deploy/my-deploy-rollout --to-revision=2  
+# => kubectl rollout undo deploy/my-deploy-rollout    will take you to the last version
+# => kubectl rollout undo deploy/my-deploy-rollout --to-revision=2  will take you to the specified version
+
+# => kubectl rollout histry deploy    or 
 # => kubectl rollout history deploy/my-deploy-rollout
 # REVISION  CHANGE-CAUSE
 # 1         <none>
 # 3         <none>
 # 4         <none>
 
-#  => kubectl port-forward deploy/my-deploy-rollout 8080:80
+
+# => kubectl rollout undo deploy/my-deploy-rollout --to-revision=1
+
+# => kubectl rollout history deploy/my-deploy-rollout
+# REVISION  CHANGE-CAUSE
+# 3         <none>
+# 4         <none>
+# 5         <none>
+
+
+# Flow to test the rollout for better understanding
+# => kubectl delete deploy --all
+
+# when v1
+# => kubectl apply -f 03-deploy-rollout.yaml
+# => kubectl port-forward deploy/my-deploy-rollout 8080:80  
+# => kubectl rollout history deploy
+# REVISION  CHANGE-CAUSE
+# 1         <none>
+
+# when v2
+# => kubectl apply -f 03-deploy-rollout.yaml
+# => kubectl port-forward deploy/my-deploy-rollout 8080:80
+# => kubectl rollout history deploy
+# REVISION  CHANGE-CAUSE
+# 1         <none>
+# 2         <none>
+
+# when v3
+# => kubectl apply -f 03-deploy-rollout.yaml
+# => kubectl port-forward deploy/my-deploy-rollout 8080:80
+# => kubectl rollout history deploy
+# REVISION  CHANGE-CAUSE
+# 1         <none>
+# 2         <none>
+# 3         <none>
+
+# => kubectl rollout undo deploy 
+# => kubectl rollout history deploy
+# => kubectl port-forward deploy/my-deploy-rollout 8080:80  see the version  which shows v2 
+# REVISION  CHANGE-CAUSE
+# 1         <none>  version will be v1 
+# 3         <none>  version will be v3
+# 4         <none>  version will be v2
+
+
+# kubectl rollout undo deploy  
+# kubectl rollout history deploy
+# => kubectl port-forward deploy/my-deploy-rollout 8080:80  see the version which shows again the v3 not v1 
+# REVISION  CHANGE-CAUSE
+# 1         <none> version will be v1 
+# 4         <none> version will be v2    kind of loop again back to v3 , didn't go to v1 :( , just switch between v2 and v3
+# 5         <none> version will be v3
+
+
+
+# Summary:
+# kubectl apply -f ...
+# When you update the deployment (e.g., image tag v1, v2, v3), each time a new revision is created.
+
+# So your history shows:
+# REVISION  CHANGE-CAUSE
+# 1         <none>  # v1
+# 2         <none>  # v2
+# 3         <none>  # v3
+
+# kubectl rollout undo deploy
+
+# This rolls back to revision 2 (v2) because 3 (v3) is the latest.
+
+# Now you get a new revision 4, which has the same spec as v2.
+
+# If you undo again, it goes back to v3 (since v4 is basically v2 again).
+
+# You get revision 5, with same config as revision 3.
+
