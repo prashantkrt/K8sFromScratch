@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deploy-rollout
+spec: 
+  replicas: 3
+  selector: 
+    matchLabels:
+      app: my-app
+  template:
+   metadata:
+      labels:
+        app: my-app
+   spec:
+      containers:
+        - name: nginx
+          image: vinsdocker/k8s-app:v3  # will make change to v2 and then v3
+          ports:
+            - containerPort: 80    
+              name: "app-port"
+
+# => kubectl delete deploy --all       
+
+# => kubectl apply -f 03-deploy-rollout.yaml   
+# => kubectl logs deploy/my-deploy-rollout 
+
+# => kubectl port-forward deploy/my-deploy-rollout 8080:80
+
+# since I have only one deployement 
+# => kubectl rollout history deploy
+
+# changing the version to v2
+# => kubectl apply -f 03-deploy-rollout.yaml   
+# => kubectl port-forward deploy/my-deploy-rollout 8080:80
+# => kubectl rollout history deploy/my-deploy-rollout
+
+# changing the version to v3
+# => kubectl apply -f 03-deploy-rollout.yaml   
+# => kubectl port-forward deploy/my-deploy-rollout 8080:80
+# => kubectl rollout history deploy/my-deploy-rollout
+# REVISION  CHANGE-CAUSE
+# 1         <none>
+# 2         <none>
+# 3         <none>
+
+# => kubectl rollout history deploy/my-deploy-rollout --revision=1
+# Pod Template:
+#   Labels:       app=my-app
+#         pod-template-hash=cb5445dd5
+#   Containers:
+#    nginx:
+#     Image:      vinsdocker/k8s-app:v1  ## see the image version is v1
+#     Port:       80/TCP
+#     Host Port:  0/TCP
+#     Environment:        <none>
+#     Mounts:     <none>
+#   Volumes:      <none>
+#   Node-Selectors:       <none>
+#   Tolerations:  <none>
+
+# My deployment is running v3
+# => kubectl rollout undo deploy/my-deploy-rollout --to-revision=2  
+# => kubectl rollout history deploy/my-deploy-rollout
+# REVISION  CHANGE-CAUSE
+# 1         <none>
+# 3         <none>
+# 4         <none>
+
+#  => kubectl port-forward deploy/my-deploy-rollout 8080:80
