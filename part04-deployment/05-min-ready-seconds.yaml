@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+spec: 
+ minReadySeconds: 10 # minimum  number of seconds that the pod should be ready
+ replicas: 3
+ selector:
+   matchLabels:
+     app: my-app
+ template:
+   metadata:
+     labels:
+       app: my-app
+   spec:
+     containers:
+     - name: nginx
+       image: nginx
+     
+# The minReadySeconds field in a Kubernetes Deployment specifies the minimum number of seconds a newly created Pod should be in a 'ready' state before it is considered available for use.
+#minReadySeconds: 10 means:
+# After a pod is reported as Ready, Kubernetes will wait for 10 seconds before marking it as Available.
+# This helps ensure that the pod is not just "quickly ready" and then fails — it's a stability check.
+# The minReadySeconds can be very helpful in cases like database connections, where:
+
+# => kubectl apply -f 05-min-ready-seconds.yaml 
+# => kubectl get deploy/my-deployment , will be available after 10 seconds
+# NAME            READY   UP-TO-DATE   AVAILABLE   AGE
+# my-deployment   3/3     3            3           2m11s
+
+# => kubectl delete deploy --all
