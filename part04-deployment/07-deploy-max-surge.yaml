@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+  annotations:
+    kubernetes.io/change-cause: "v3 version"
+spec: 
+ minReadySeconds: 10
+ strategy:
+     type: RollingUpdate
+     rollingUpdate:
+       maxSurge: 1
+ replicas: 3
+ selector:
+   matchLabels:
+     app: my-app
+ template:
+   metadata:
+     labels:
+       app: my-app
+   spec:
+     containers:
+     - name: my-app-service
+       image: vinsdocker/k8s-app:v3
+       ports:
+          - containerPort: 80
+            name: "app-port"
+
+## Deployment Strategy!!
+# 1. recreate => delete/terminate all the old pods and then create the new pods.
+# In this strategy, all old Pods are killed first, then new Pods are created.   
+
+
+#  RollingUpdate Strategy (Default) Kubernetes gradually replaces old Pods with new ones.
+# 2. rolling update => gradually replace the old pods with new ones. Gradually rollout the changes. We can mix the old and new pods temporarily.
+# For rolling update we have two properties:
+# a. maxUnavailable: maximum number of pods that can be unavailable during the update process.
+# b. maxSurge: maximum number of additional pods that can be created. Max extra pods allowed above desired replicas
+
+
+# Say you have replicas: 3, here's what happens:
+# Field	Value	Meaning
+# maxSurge	1	Up to 4 pods can run temporarily
+# maxUnavailable	1	At least 2 pods will always be running
+
+# Say you have replicas: 3, here's what happens:
+# Field	Value	Meaning
+# maxSurge	3	Up to 6 pods can run temporarily
+# maxUnavailable	3	Up to 3 Pods can be unavailable during the update → even 0 running
+
+# Commands
+# => kubectl delete deploy --all
+# => kubectl apply -f 07-deploy-max-surge.yaml
+# => kubectl rollout history deploy/my-deployment
+
+
