@@ -25,3 +25,5 @@
 #  Rollouts 
 => kubectl rollout undo deploy/my-deploy-rollout --to-revision=2  
 => kubectl rollout history deploy/my-deploy-rollout
+
+# => kubectl delete all --all

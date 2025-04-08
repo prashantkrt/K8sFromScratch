@@ -22,3 +22,5 @@
 # => kubectl get pods --show-labels
 
 # => kubectl delete -f 01-simple-rs.yaml
+
+# => kubectl delete all --all

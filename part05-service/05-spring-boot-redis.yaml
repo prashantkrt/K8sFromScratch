@@ -1,0 +1,100 @@
+# --- Spring Boot Application Deployment ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-boot-redis-app  # Name of the Spring Boot deployment
+spec:
+  minReadySeconds: 15  # Minimum time a Pod should be ready before it is considered available since it will connect to Redis
+  selector:
+    matchLabels:
+      app: my-app  # Selector to match Pods with the label app=assignment
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: my-app  # This label matches the selector above
+    spec:
+      terminationGracePeriodSeconds: 30
+      containers:
+      - name: my-container-redis  # Container name
+        image: vinsdocker/k8s-deploy-assignment  # Your Spring Boot app image
+        ports:
+        - containerPort: 8080  # Port your app is running on
+          name: "app-port"
+        env:
+        - name: "spring.redis.host"
+          value: "redis"  # <- This is the **name of the Redis Service**
+        - name: "spring.redis.port"
+          value: "6379"   # <- Redis service port
+
+# spring.redis.host=redis
+# spring.redis.port=6379 
+# spring-boot-pod -> tries to connect to -> redis:6379
+# Explanation:
+# The Spring Boot app uses environment variables to connect to Redis.
+# When the app runs, it connects to redis:6379.   
+
+---
+
+# --- Redis Deployment ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis  # Selector to match Pods with label app=redis
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: redis  # This label matches the service selector below
+    spec:
+      containers:
+      - name: redis
+        image: redis:6  # Redis server image
+        ports:
+        - containerPort: 6379
+          name: "redis-port"  # Port Redis is listening on inside the Pod
+
+
+# Explanation:
+# Redis is deployed with 1 replica.
+# The pod has the label app=redis.     
+
+
+---
+
+# spring-boot-pod -> tries to connect to -> redis:6379
+# service name redis
+# service port 6379
+# --- Redis Service ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis  # <-- This name becomes the DNS name: redis.default.svc.cluster.local
+spec:
+  selector:
+    app: redis  # Matches pods with label app=redis
+  ports:
+  - port: 6379       # Port exposed by the service
+    targetPort: 6379 # Port inside the Redis Pod
+
+
+# The service named redis selects pods with app=redis.
+# It exposes port 6379 to other pods in the cluster.
+# Since the service is called redis, any pod in the same namespace can access it using just the hostname redis.
+# That’s why your app can use spring.redis.host=redis.
+
+
+
+# commands 
+
+# => kubectl delete deploy --all
+# => kubectl delete svc --all
+# => kubectl delete pods --all
+
+# => kubectl apply -f 05-spring-boot-redis.yaml
+# => kubectl port-forward deploy/spring-boot-redis-app 8080:8080
+# => http://localhost:8080

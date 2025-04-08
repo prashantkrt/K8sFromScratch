@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: redis-deployment
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata: 
+      labels: 
+        app: redis
+    spec: 
+      terminationGracePeriodSeconds: 0 
+      containers:       
+        - name: redis-container
+          image: redis:6.0.9
+          ports:
+            - containerPort: 6379 
+              name: redis-port
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+spec:
+  selector:
+    app: redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+
+---
+
+# Created a pod to test the service
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis-client
+  labels:
+    app: redis-client
+spec:
+  containers:
+    - name: redis-client-container
+      image: redis:6.0.9
+      command: [ "sleep", "3600" ] # Keeps the pod running so you can exec into it
+
+---
+# Created a pod to test the service
+# This pod is running ubuntu and we will install redis-cli in it
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ubuntu-client
+  labels:
+    app: ubuntu-client
+spec:
+  containers:
+    - name: ubuntu-container
+      image: ubuntu
+      command: [ "sleep", "3600" ] # Keeps the pod running
+
+# These all comminication is happing through kube proxy
+# Kube Proxy watches services and endpoints.
+
+# commands used
+
+# => kubectl apply -f .
+
+# => kubectl exec -it redis-client -- bash
+# connect to redis
+# redis-cli -h redis-service -p 6379
+# set name Prashant
+# get name
+# exit
+
+
+# => kubectl exec -it ubuntu-client -- bash
+# apt update
+# apt install redis-tools -y
+# redis-cli -h redis-service -p 6379
+# redis-service:6379> ping
+# PONG
+# redis-service:6379> set name Prashant
+# redis-service:6379> get name
+# exit
+
+
+# Situation	Need a Service?
+# 2 containers in the same pod	❌ No
+# Pod A wants to talk to Pod B	✅ Yes
+# Frontend wants to hit backend deployment	✅ Yes
+# External world wants to talk to app	✅ Yes (via NodePort/LoadBalancer/Ingress)

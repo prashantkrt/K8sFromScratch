@@ -89,3 +89,5 @@
 => kubectl logs multi-container-pod -c nginx
 => kubectl exec -it multi-container-pod -c ubuntu -- /bin/bash
 => kubectl exec -it multi-container-pod -c nginx -- /bin/bash
+
+# => kubectl delete all --all

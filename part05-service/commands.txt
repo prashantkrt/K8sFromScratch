@@ -71,3 +71,13 @@
 #kubectl get svc
 
 # => kubectl apply -f .
+
+# => kubectl delete all --all
+This deletes:
+Deployments
+Pods
+Services
+ReplicaSets
+StatefulSets
+DaemonSets
+etc.
