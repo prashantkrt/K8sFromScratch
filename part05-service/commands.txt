@@ -56,6 +56,18 @@
 # Service Command
 # => kubectl delete svc --all
 
-# => watch -t 'kubectl get deploy && echo && kubectl get svc'
+# => watch -t 'kubectl get pods && echo && kubectl get deploy && echo && kubectl get svc'
+# echo simply adds a blank line between the output of each kubectl command.
+# without echo
+#kubectl get pods
+#kubectl get deploy
+#kubectl get svc
+
+#with echo adds blank line
+#kubectl get pods
+
+#kubectl get deploy
+
+#kubectl get svc
 
 # => kubectl apply -f .
