@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-deploy
+  name: my-deploy  # Name of the Deployment
 spec:
   selector:
     matchLabels:
-      app: my-app
+      app: my-app # This label selector ensures the Deployment manages only Pods with this label
   replicas: 2
   template:
     metadata:
       labels:
-        app: my-app
+        app: my-app  # This label is added to Pods and must match the Service selector for traffic routing
     spec:
       containers:
       - name: nginx
         image: nginx
         ports:
-        - containerPort: 80
+        - containerPort: 80  # Port the container listens on
 
 
 

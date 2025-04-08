@@ -54,6 +54,8 @@
 
 
 # Service Command
+# => kubectl delete svc --all
+
 # => watch -t 'kubectl get deploy && echo && kubectl get svc'
 
 # => kubectl apply -f .

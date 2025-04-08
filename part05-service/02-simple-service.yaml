@@ -3,12 +3,12 @@ kind: Service
 metadata:
   name: my-service
 spec: 
- selector: 
-    app: my-app
+ selector:      # This selector must match the label on the target Pods exactly (from Deployment)
+    app: my-app # Hey Kubernetes, send traffic to all Pods that have label app: my-app. the Service selector must match the Pod's labels exactly.
  ports:   
   - protocol: TCP
-    port: 8080
-    targetPort: 80
+    port: 8080      # Port exposed by the Service (clients send traffic here)
+    targetPort: 80  # Port on the container (Pod) where traffic is forwarded
 
 # ClusterIP (default)
 

@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+ name: my-deployment-1
+ annotations:
+   kubernetes.io/change-cause: "v1 version"
+ labels:
+   app: my-application-deployment  
+spec: 
+  minReadySeconds: 5 # minimum number of seconds for which a newly created pod should be ready before it is considered available.
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1 # maximum number of pods that can be unavailable during the update process.
+      maxSurge: 1 # maximum number of additional pods that can be created. Max extra pods allowed above desired replicas
+  replicas: 3
+  selector: 
+    matchLabels: 
+      app: my-app
+  template:
+    metadata: 
+      labels: 
+        app: my-app
+    spec: 
+      terminationGracePeriodSeconds: 0 # 0 seconds to terminate the pod
+      containers:       
+        - name: my-container-1
+          image: vinsdocker/nginx-gke # this container will gives the pod name
+
+---    
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+  labels:
+    app: my-service # this label is specific to the service
+spec:
+ selector:
+   app: my-app # this label is specific to the pods under the deployment
+ ports:
+  - name: "my-app-port"
+    port: 8080 # port exposed by the service
+    targetPort: 80 # port on the pod to which traffic will be forwarded
+
+---
+# Created a pod to test the service 
+apiVersion: v1
+kind: Pod
+metadata:
+  name:  my-client-pod
+  labels:
+    app: my-client # this label is specific to the pod
+spec:
+  containers:
+     - name: curl-container
+       image: curlimages/curl
+       command: ["sleep", "3600"]  # Keeps the pod running
+      
+
+
+
+# Commands 
+# => kubectl apply -f 03-svc-load-balancing.yaml
+
+# => kubectl exec -it my-client-pod -- sh
+
+# => curl my-service:8080
+
+#~ $ curl my-service:8080 
+# <H1>Hello my-deployment-1-57f6d44f5-sw565 </H1>
+# ~ $ curl my-service:8080
+# <H1>Hello my-deployment-1-57f6d44f5-rzqbk </H1>
+# ~ $ curl my-service:8080
+# <H1>Hello my-deployment-1-57f6d44f5-4mdnt </H1>
+# ~ $ curl my-service:8080
+# <H1>Hello my-deployment-1-57f6d44f5-rzqbk </H1>
+
+
+
+
+
+  
