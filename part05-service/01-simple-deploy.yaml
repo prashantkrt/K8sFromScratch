@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: my-app
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -18,21 +18,31 @@ spec:
         ports:
         - containerPort: 80
 
-# Command to apply the deployment
+
+
+# Command applied 
 # => kubectl apply -f part05-service/01-simple-deploy.yaml
+
 # Command to check the deployment
 # => kubectl get deploy
-# => Command to check the pods
+
+# Command to check the pods
 # => kubectl get pods
+
 # Command to check the logs of the pod        
 # => kubectl logs <pod-name>
+
 # Command to check the events of the pod
 # => kubectl describe pod <pod-name>
+
 # Command to check the events of the deployment
 # => kubectl describe deploy <deploy-name>
+
 # Command to delete the deployment
 # => kubectl delete deploy <deploy-name>
+
 # Command to delete the pod
 # => kubectl delete pod <pod-name>
+
 # Command to delete all the resources in the namespace
 # => kubectl delete all --all -n <namespace>

@@ -17,6 +17,14 @@
 # Rooms (Pods) change numbers every day (because Pods are ephemeral — they die and get recreated with new IPs). So, how can the waiters always find Room Service?
 # The solution? Create a Service Desk (Kubernetes Service) with:
 
+# Structure of the service
+# apiVersion: v1    API version used to define the object. Always v1 for core Service.
+# kind: Service   	Specifies what we’re creating — here, a Service.
+# metadata:         metadata.name,  Name of the service. Used for DNS, etc.
+# spec:
+#   selector:     Connects the Service to the right Pods using label matching.
+#   ports:        Defines the ports the service listens on and forwards to.
+#   type: 	      Type of the service: ClusterIP (default), NodePort, LoadBalancer, etc.
 
 # => kubectl apply -f part05-service/01-simple-deploy.yaml
 
@@ -43,3 +51,9 @@
 
 # Command to delete all the resources in the namespace
 # => kubectl delete all --all -n <namespace>
+
+
+# Service Command
+# => watch -t 'kubectl get deploy && echo && kubectl get svc'
+
+# => kubectl apply -f .

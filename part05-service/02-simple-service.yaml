@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec: 
+ selector: 
+    app: my-app
+ ports:   
+  - protocol: TCP
+    port: 8080
+    targetPort: 80
+
+# ClusterIP (default)
+
+# Structure of the service
+# apiVersion: v1    API version used to define the object. Always v1 for core Service.
+# kind: Service   	Specifies what we’re creating — here, a Service.
+# metadata:         metadata.name,  Name of the service. Used for DNS, etc.
+# spec:
+#   selector:     Connects the Service to the right Pods using label matching.
+#   ports:        Defines the ports the service listens on and forwards to.
+#   type: 	      Type of the service: ClusterIP (default), NodePort, LoadBalancer, etc.
+
+   
+# Command to apply the service
+# => kubectl apply -f 02-simple-service.yaml
+
+# => kubectl get services
+# NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+# kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP    5d22h  # Default Kubernetes service for communicating with the API server.
+# my-service   ClusterIP   10.96.119.80   <none>        8080/TCP   78s  # my-service is the service we just created.
+
+# => kubectl describe service my-service
+# Do observation on the output of the command below , try deleing the pods and see how the endpoints change
+
+# Name:                     my-service
+# Namespace:                default
+# Labels:                   <none>
+# Annotations:              <none>
+# Selector:                 app=my-app
+# Type:                     ClusterIP
+# IP Family Policy:         SingleStack
+# IP Families:              IPv4
+# IP:                       10.96.119.80 # Cluster IP of the service. This is the IP that other pods will use to access this service. And this will not change.
+# IPs:                      10.96.119.80
+# Port:                     <unset>  8080/TCP
+# TargetPort:               80/TCP
+# Endpoints:                10.244.1.8:80,10.244.2.8:80  # Endpoints of the service. These are the IPs of the pods that match the selector. And this will vary based on the pods that are running.
+# Session Affinity:         None
+# Internal Traffic Policy:  Cluster
+# Events:                   <none>
