@@ -114,3 +114,26 @@ kubectl apply auto-adds the last-applied-configuration annotation.
 This helps Kubernetes understand what your original YAML was, so it can diff against future changes.
 
 Stored as a minified JSON string.
+
+
+# Namespace in kubernetes
+=> kubectl create namespace dev
+=> kubectl create namespace prod
+=> kubectl create ns qa
+
+=> kubectl apply -f app-deployment.yaml -n dev
+=> kubectl apply -f app-deployment.yaml -n prod
+
+# will give all the namespace created
+=> kubectl get namespace or ns
+
+# namespace name starting with kube are reserved 
+kube-system: For Kubernetes system components.
+kube-public: Readable by all users (often for public config).
+default: Default for user-created resources if no namespace is specified.
+
+# will give the pods with this namespace
+=> kubectl get pod -n qa
+
+=> kubectl delete ns dev
+
