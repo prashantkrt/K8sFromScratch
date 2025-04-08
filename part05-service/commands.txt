@@ -1,0 +1,45 @@
+# Services : 
+# Logical abstraction for a set of pods
+# Service is an abstraction that defines a logical set of Pods and a policy by which to access them
+# Since Pods in Kubernetes are ephemeral (they can die and be replaced at any time), a Service helps you reliably communicate with the pods regardless of changes in their IP addresses.
+# Ensures stable network identity for a set of pods.
+# Handles load balancing across the matching pods.
+# Allows service discovery within the cluster.
+# Facilitates external access to your applications (via NodePort or LoadBalancer).
+
+# A single reliable network endpoint to access the pods =>  a consistent way to access your Pods, even when individual Pods come and go.
+# Stable IP addresses => A Pod IP is not reliable — it changes when the Pod restarts.
+# DNS Name 
+
+# Ek Mast example deta hu: 
+# Imagine you’re running a hotel (your Kubernetes cluster) with many identical rooms (your Pods) where waiters (clients/microservices) need to deliver food to Room Service.
+# But there's a problem:
+# Rooms (Pods) change numbers every day (because Pods are ephemeral — they die and get recreated with new IPs). So, how can the waiters always find Room Service?
+# The solution? Create a Service Desk (Kubernetes Service) with:
+
+
+# => kubectl apply -f part05-service/01-simple-deploy.yaml
+
+# Command to check the deployment
+# => kubectl get deploy
+
+# Command to check the pods
+# => kubectl get pods
+
+# Command to check the logs of the pod        
+# => kubectl logs <pod-name>
+
+# Command to check the events of the pod
+# => kubectl describe pod <pod-name>
+
+# Command to check the events of the deployment
+# => kubectl describe deploy <deploy-name>
+
+# Command to delete the deployment
+# => kubectl delete deploy <deploy-name>
+
+# Command to delete the pod
+# => kubectl delete pod <pod-name>
+
+# Command to delete all the resources in the namespace
+# => kubectl delete all --all -n <namespace>
