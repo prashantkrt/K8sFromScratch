@@ -1,0 +1,17 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: dev-cluster-2
+nodes:
+- role: control-plane
+  extraPortMappings:
+   - containerPort: 30001   
+     hostPort: 8080 # localhost port
+     protocol: TCP
+- role: worker
+- role: worker
+
+# http://localhost:8080
+# This mapping makes Kind forward traffic from your host (your laptop) on port 8080 to the container running the control-plane node on port 30001, which is the NodePort exposed by your service.
+
+
+# kind create cluster --config 02-cluster-port-mapping.yaml 

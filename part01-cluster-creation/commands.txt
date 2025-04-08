@@ -19,6 +19,10 @@
  => ps -aux 
  => exit 
 
+ # deletet the cluster
+ => kind delete cluster --name=dev-cluster
+
+
 
 
 
