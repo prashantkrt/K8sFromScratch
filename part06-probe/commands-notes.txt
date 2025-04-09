@@ -18,6 +18,20 @@ Probe is specific to pod
 flow 
 startup probe (if pass )=> liveness probe (if pass) => readiness probe   
 
+Remember : 
+startUp probes
+It stops as soon as conatienr started
+if it check pass , startUp probes stops
+
+liverness proble 
+It starts once once startUp probe ends 
+It is executed throughout the pod lifecycle 
+
+readiness probe
+It starts once once startUp probe ends 
+It is executed throughout the pod lifecycle
+
+
 Probles methods 
 1. HTTP GET: Calls an HTTP endpoint like /health or /ready.
 

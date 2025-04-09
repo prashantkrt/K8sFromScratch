@@ -8,7 +8,7 @@ spec:
       image: nginx
       startupProbe: 
         httpGet:
-         path: /
+         path: / # I have used dummy path to trigger a 404 error previously :)
          port: 80
         initialDelaySeconds: 0 # time to wait before starting the probe
         periodSeconds: 10 # time between probes 
@@ -16,11 +16,41 @@ spec:
         successThreshold: 1 # number of successful probes before considering the container started
         failureThreshold: 3 # number of failed probes before considering the container failed
        
-# commands
+# commands 
+
 # kubeclt detele all --all
 
-# kubectl create -f 01-startup-httpget.yaml
+# kubectl apply -f 01-startup-httpget.yaml
+
+# kubectl describe pod nginx-pod  ( Startup probe failed: HTTP probe failed with statuscode: 404 )
 
 # watch -t 'kubectl get pods && echo && kubectl get svc'
 
-#  
+# intentailly trigger a 404 error by using a wrong path
+
+# kubectl apply -f 01-startup-httpget.yaml ( given wrong path /dummy  hehehe)
+
+# initialDelaySeconds: 0
+
+# The first probe starts immediately after the container starts.
+# periodSeconds: 10
+# Probes are sent every 10 seconds.
+# failureThreshold: 3
+# Kubernetes will wait for 3 failed probes before marking the container as failed and restarting it.
+# timeoutSeconds: 1
+# Each probe will wait 1 second for a response before timing out.
+
+# Probe Attempt	Time (sec)	Result
+# 1st	0s	Failed
+# 2nd	10s Failed
+# 3rd	20s	Failed
+# → Restart	~20–21s	Container restarts
+
+#It will take about 20 seconds (3 failed probes every 10 seconds) for Kubernetes to restart the container, because the wrong path (/dummy) causes 3 failures in a row.
+
+
+#  0 out of 1 containers in the pod are ready to accept traffic (i.e., Readiness probe is failing or container is not fully up)
+# NAME        READY   STATUS    RESTARTS      AGE
+# nginx-pod   0/1     Running   3 (22s ago)   2m3s
+
+
