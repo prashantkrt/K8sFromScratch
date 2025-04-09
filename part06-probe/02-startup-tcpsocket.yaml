@@ -27,7 +27,7 @@ spec:
 #   successThreshold: 1
 #   failureThreshold: 5         # Allow more retries before restart    
 
-# command to run
+# commands to run
 # kubectl apply -f 02-startup-tcpsocket.yaml
 # command to check the pod status     
 
