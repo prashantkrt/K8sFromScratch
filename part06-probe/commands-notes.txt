@@ -4,11 +4,11 @@ Probe is specific to pod
 
 1. Startup Probe => Checks if the app has started successfully => Restarts the container if fails
     ## First it check startup probe 
-    ##f it fails, Kubernetes will restart container
+    ## if it fails, Kubernetes will restart container
 2. Liveness Probe => Checks if the app is still running (alive) => Restarts the container if fails
    Is is alive ?? 
-    ## Post Startup probe it checks the Lineness probe
-    ## it fails, Kubernetes will restart the container.
+   ## Post Startup probe it checks the Lineness probe
+   ## it fails, Kubernetes will restart the container.
 3. Readiness Probe => Checks if the app is ready to accept traffic => Removes the Pod from the service if fails
    Can Pod ready to serve the response ( may be pod is fully ready but it needs some depenency which has some isse so won't able to serve the request)
    ## App might be running fine but not yet able to serve requests due to a dependency issue (e.g., DB not reachable).
@@ -16,7 +16,9 @@ Probe is specific to pod
    ## if it fails, Kubernetes removes the pod from the Service endpoint (i.e., no traffic will be routed to it).
 
 flow 
-startup probe (if pass )=> liveness probe (if pass) => readiness probe   
+startup probe (if pass )=> liveness probe 
+startup probe (if pass )=> readiness probe   
+in simple if startup probe passes both liveness probe and readiness probe kicks in parallel  
 
 Remember : 
 startUp probes
@@ -84,3 +86,9 @@ The Pod object remains the same, only the container is restarted.
 
 
 ## Commands used 
+=> watch -t 'kubectl get pods && echo && kubectl get svc'
+=> kubeclt detele all --all
+=> kubectl apply -f 02-startup-tcpsocket.yaml
+=> kubectl decribe pods 
+=> kubectl apply -f nginx-liveness.yaml
+=> kubectl exec -it nginx-liveness-pod -- rm /usr/share/nginx/html/index.html

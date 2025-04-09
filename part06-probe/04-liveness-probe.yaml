@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  terminationGracePeriodSeconds: 0
+  containers:
+  - name: probe-demo
+    image: vinsdocker/k8s-probe-demo
+    startupProbe:
+      httpGet:
+        path: /
+        port: 80
+      periodSeconds: 1
+      failureThreshold: 30
+    livenessProbe:
+      httpGet:
+        path: /live.html
+        port: 80
+      periodSeconds: 1 # Check every 1s
+      failureThreshold: 3  # After 3 consecutive failures, restart
+
+# vinsdocker/k8s-probe-demo uses nginx , it has /live.html with port 80
+# nginx will start after 10 seconds       
+
+# => kubectl delete all --all
+# => kubectl apply -f 04-liveness-probe.yaml
+
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: nginx-liveness-pod
+#   labels:
+#     app: liveness-demo
+# spec:
+#   containers:
+#     - name: nginx
+#       image: nginx
+#       ports:
+#         - containerPort: 80
+#       livenessProbe:
+#         httpGet:
+#           path: /
+#           port: 80
+#         initialDelaySeconds: 5     # Wait 5s before first check
+#         periodSeconds: 10          # Check every 10s
+#         timeoutSeconds: 1          # Wait 1s max for a response
+#         successThreshold: 1        # One success is enough to be "live"
+#         failureThreshold: 3        # After 3 consecutive failures, restart    
+
+# Path / is used to check if NGINX is serving.
+# If NGINX stops responding on port 80, Kubernetes will:
+# Try 3 times (every 10 seconds)
+# If all 3 fail, the container will be restarted
+
+
+# => kubectl apply -f nginx-liveness.yaml
+# => kubectl exec -it nginx-liveness-pod -- rm /usr/share/nginx/html/index.html
+#  NGINX will start returning 404, and after 3 failed probes, the container will be restarted.
+

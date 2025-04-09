@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-readiness-pod
+  labels:
+    app: readiness-demo
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      ports:
+        - containerPort: 80
+      readinessProbe:
+        httpGet:
+          path: /
+          port: 80
+        initialDelaySeconds: 5     # Wait 5s before first check
+        periodSeconds: 10          # Check every 10s
+        timeoutSeconds: 1          # 1s timeout
+        successThreshold: 1        # Only 1 success needed to be 'ready'
+        failureThreshold: 3        # 3 failures → Pod marked 'NotReady'
+
+
+# Kubernetes will wait 5 seconds before checking if NGINX is serving / on port 80.
+# If the HTTP GET request fails 3 times in a row, the pod will be marked NotReady.
+# When NotReady, the pod is removed from the service endpoints (so no traffic will be sent to it).
+
+# Status	What Happens
+# ✔️ Success	Pod is added to the Service and receives traffic
+# ❌ Failure (x3)	Pod is removed from the Service

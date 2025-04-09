@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+  labels:
+    app: probe-learning    
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    startupProbe:
+      exec:
+        command:
+         - "cat"
+         - "/usr/share/nginx/html/index.html"
+      initialDelaySeconds: 5
+      periodSeconds: 1
+      timeoutSeconds: 1
+      successThreshold: 1
+      failureThreshold: 3
+
+
+# prefer httpGet and tcpSocket over exec      
+
+# kubectl apply -f 03-startup-exec.yaml
+
+##If the file exists and Nginx container is ready quickly:
+# Event	Time
+# Wait before first probe	5s (initialDelaySeconds)
+# First probe succeeds	+0s
+# Container considered "started"	✅ at 5s
+
+##If the file doesn’t exist initially or is not ready:
+# Probe Attempt	Time	Result
+# 1st	5s	❌ Failed
+# 2nd	6s	❌ Failed
+# 3rd	7s	❌ Failed
+# Restart	~7s	Container restarted
+# ➡️ 🔴 Worst-case startup time before restart: 7 seconds
+
+# Then Kubernetes starts the container again and repeats the same cycle.

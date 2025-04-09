@@ -1,0 +1,82 @@
+# vinsdocker/k8s-probe-demo uses nginx
+# nginx will start after 10 seconds
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+  labels:
+    app: my-app
+spec:
+  terminationGracePeriodSeconds: 1
+  containers:
+  - name: probe-demo
+    image: vinsdocker/k8s-probe-demo
+    startupProbe:
+      httpGet:
+        path: /
+        port: 80
+      periodSeconds: 1 # check every second
+      failureThreshold: 30 # 30 consecutive failures before marking the container as failed
+    livenessProbe:
+      httpGet:
+        path: /live.html
+        port: 80
+      periodSeconds: 1 # check every second
+      failureThreshold: 3 # 3 consecutive failures before marking the container as failed   
+    readinessProbe:
+      httpGet:
+        path: /ready.html
+        port: 80
+      periodSeconds: 1 # check every second
+      failureThreshold: 1   # 1 failure before marking the container as NotReady    
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app
+spec:
+  selector:
+    app: my-app
+  ports:
+  - port: 80
+    targetPort: 80      
+
+
+# commands 
+
+# => kubectl apply -f 06-probe-svc.yaml
+
+# => watch -t 'kubectl get pods && echo && kubectl get svc'
+# NAME     READY   STATUS    RESTARTS   AGE
+# my-pod   1/1     Running   0          2m31s
+
+# NAME         TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)   AGE
+# kubernetes   ClusterIP   10.96.0.1     <none>        443/TCP   2m43s
+# my-app       ClusterIP   10.96.230.5   <none>        80/TCP    2m31s
+
+# making the dummy path and check
+
+# NAME     READY   STATUS    RESTARTS   AGE
+# my-pod   0/1     Running   0          43s  # pod is running but container is not ready
+
+# NAME         TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)   AGE
+# kubernetes   ClusterIP   10.96.0.1     <none>        443/TCP   6m45s
+# my-app       ClusterIP   10.96.230.5   <none>        80/TCP    6m33s
+
+# => kubectl describe svc
+# Name:                     my-app
+# Namespace:                default
+# Labels:                   <none>
+# Annotations:              <none>
+# Selector:                 app=my-app
+# Type:                     ClusterIP
+# IP Family Policy:         SingleStack
+# IP Families:              IPv4
+# IP:                       10.96.230.5
+# IPs:                      10.96.230.5
+# Port:                     <unset>  80/TCP
+# TargetPort:               80/TCP 
+# Endpoints:                             ## see no endpoints in the service
+# Session Affinity:         None
+# Internal Traffic Policy:  Cluster
+# Events:                   <none>
