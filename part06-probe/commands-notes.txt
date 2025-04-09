@@ -1,0 +1,72 @@
+Probes are used by Kubernetes to check the health of your application running inside a Pod.
+
+Probe is specific to pod
+
+1. Startup Probe => Checks if the app has started successfully => Restarts the container if fails
+    ## First it check startup probe 
+    ##f it fails, Kubernetes will restart container
+2. Liveness Probe => Checks if the app is still running (alive) => Restarts the container if fails
+   Is is alive ?? 
+    ## Post Startup probe it checks the Lineness probe
+    ## it fails, Kubernetes will restart the container.
+3. Readiness Probe => Checks if the app is ready to accept traffic => Removes the Pod from the service if fails
+   Can Pod ready to serve the response ( may be pod is fully ready but it needs some depenency which has some isse so won't able to serve the request)
+   ## App might be running fine but not yet able to serve requests due to a dependency issue (e.g., DB not reachable).
+   ## lastly since pod is live it will check whether it able to serve the request or not
+   ## if it fails, Kubernetes removes the pod from the Service endpoint (i.e., no traffic will be routed to it).
+
+flow 
+startup probe (if pass )=> liveness probe (if pass) => readiness probe   
+
+Probles methods 
+1. HTTP GET: Calls an HTTP endpoint like /health or /ready.
+
+ httpGet:
+    path: /health
+    port: 8080
+
+2. TCP Socket: Tries to open a TCP connection on a specified port.
+
+tcpSocket:
+    port: 80
+
+# this Exec is less used
+3. Exec: Runs a command inside the container and checks the exit code (0 = success).
+
+exec:
+    command:
+      - cat
+      - /tmp/healthy
+
+Properites 
+
+1. initialDelaySeconds => Time to wait before starting the first probe 
+2. periodSeconds =>	How often to perform the probe (default: 10s)
+3. timeoutSeconds => How long to wait for a response before failing (default: 1s)
+4. successThreshold	=> Minimum consecutive successes for the probe to be considered successful
+5. failureThreshold =>	When a probe fails X times, it's considered failed and action is taken
+
+# default values 
+initialDelaySeconds	=> 0 seconds
+periodSeconds	=>  10 seconds 
+timeoutSeconds	=> 1 second
+successThreshold => 1 
+failureThreshold => 3
+
+
+1. First:    Startup Probe => Is the app started correctly?
+2. Then:     Liveness Probe => Is the app still alive/running properly?
+3. Finally:  Readiness Probe => Is the app ready to serve requests?
+
+
+Probe Type	What Happens on Failure
+Startup Probe	❌ Restarts the container (not the whole pod)
+Liveness Probe	❌ Restarts the container (not the whole pod)
+Readiness Probe	🚫 Does NOT restart anything; it only removes the pod from the service endpoints
+
+Kubernetes never restarts an entire Pod directly.
+Instead, it restarts the failing container inside the Pod.
+The Pod object remains the same, only the container is restarted.
+
+
+## Commands used 

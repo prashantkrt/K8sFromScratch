@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+spec:
+  containers:
+    - name: nginx
+      image: nginx
+      startupProbe: 
+        httpGet:
+         path: /
+         port: 80
+        initialDelaySeconds: 0 # time to wait before starting the probe
+        periodSeconds: 10 # time between probes 
+        timeoutSeconds: 1 # time to wait for a response
+        successThreshold: 1 # number of successful probes before considering the container started
+        failureThreshold: 3 # number of failed probes before considering the container failed
+       
+# commands
+# kubeclt detele all --all
+
+# kubectl create -f 01-startup-httpget.yaml
+
+# watch -t 'kubectl get pods && echo && kubectl get svc'
+
+#  
