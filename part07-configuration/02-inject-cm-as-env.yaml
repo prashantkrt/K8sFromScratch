@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-app-config
+data:
+  DB_HOST: "postgresql.internal"
+  DB_PORT: "5432"
+  FEATURE_FLAG_LOGGING: "enabled"
+  JAVA_ENV: "production"
+  SUPPORT_CONTACT: "team@company.com"
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-env-demo
+spec:
+  containers:
+    - name: ubuntu
+      image: ubuntu
+      command: ["sleep", "3600"] # Keeps the container running     
+      envFrom:
+        - configMapRef:
+            name: my-app-config
+
+# kubectl exec -it myapp-env-demo -- bash 
+# echo $DB_HOST               # postgresql.internal
+# echo $DB_PORT               # 5432
+# echo $FEATURE_FLAG_LOGGING # enabled
+# echo $JAVA_ENV              # production
+# echo $SUPPORT_CONTACT       # team@company.com           

@@ -1,0 +1,26 @@
+# configmap-env.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-env-config
+data:
+  APP_ENV: production
+  APP_VERSION: "1.0.0"
+
+---
+# ubuntu-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ubuntu-pod
+spec:
+  containers:
+    - name: ubuntu
+      image: ubuntu
+      command: ["sleep", "3600"]  # Keeps the container running
+      envFrom:
+        - configMapRef:
+            name: my-env-config
+
+# kubectl exec -it ubuntu-pod -- /bin/bash       
+# and then echo $APP_ENV or env to see     

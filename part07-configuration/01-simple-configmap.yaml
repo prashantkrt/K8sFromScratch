@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-config
+data: 
+  appUrl: "https://myapp.example.com" 
+  appPort: "8080"
+  appEnv: "production"
+
+
+# Commands 
+# => kubectl apply -f 01-simple-configmap.yaml
+
+# => kubectl get all (this will not give the configmap)
+
+# => kubectl get configmap
+# => kubectl get cm 
+
+# => kubectl describe cm
+# => kubectl describe configmap my-config
+# => kubectl describe cm my-config
+
+# => kubectl get configmap my-config 
+# NAME        DATA   AGE
+# my-config   3      98s
+
+# => kubectl get configmap my-config -o wide
+# => kubectl get configmap my-config -o yaml
+
+## Structure of a ConfigMap
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: <configmap-name>    # Required: unique name for your ConfigMap
+# data:
+#   <key1>: <value1>          # Key-value pairs (strings only)
+#   <key2>: <value2>
+#   <key3>: <value3>
+
+# structure of ConfigMap
+# apiVersion: v1
+# kind: ConfigMap
+# metadata: 
+# data:
+#   key1: value1
+#   key2: value2
+#   key3: value3
