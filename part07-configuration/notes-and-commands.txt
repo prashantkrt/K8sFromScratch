@@ -10,3 +10,28 @@ Think of it as a way to separate your app’s configuration (like URLs, environm
 
 # => kubectl logs my-pod 
 
+# Secret 
+
+1. Opaque Secret (default) 	Default type for arbitrary user-defined key-value pairs (e.g., passwords, tokens, app secrets).
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-secret
+type: Opaque
+data:
+  key1: dmFsdWUx  # "value1" base64
+  key2: dmFsdWUy  # "value2" base64
+
+2. Basic Auth  Stores a basic auth username and password.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: basic-auth-secret
+type: kubernetes.io/basic-auth
+stringData:
+  username: myuser
+  password: mypassword
+
+.. and many more types are there but mostly i have used these types
+
+

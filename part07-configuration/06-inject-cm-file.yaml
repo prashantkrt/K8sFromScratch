@@ -9,16 +9,46 @@ data:
     a.b.c.d=something
     username=prashant    
 
----
+# kubectl get cm  app-properties -o yaml
+# data:
+#   application.properties: "appUrl=http://my-app-service\ntimeout=30\na.b.c.d=something\nusername=prashant"
 
 apiVersion: v1
 kind: Pod
 metadata:
   name: my-pod
 spec:
-  containers: 
-   - name: ubuntu
-     image: ubuntu
-     command: ["sleep","3600"]
+  terminationGracePeriodSeconds: 0
+  restartPolicy: Never
+  containers:
+  - name: ubuntu
+    image: ubuntu
+    volumeMounts:
+    - name: config-volume
+      mountPath: /usr/share/props  
+    args:
+    - sleep
+    - "3600"
+  volumes:  # remember volumes is not part of container object, it is a part of spec and it is an array
+   - name: config-volume
+     configMap:
+       name: app-properties   
+
+
+# You'd use a volume when:
+# Your app expects a file, not env vars (e.g., a config.json, .env, TLS certs).
+# You want automatic secret updates (env vars are static after pod starts; files can be updated live).
+# You need permissions and path control over how the secret is read.
      
+# Env vars = simple use, good for credentials, no volume needed
+# Volume = needed only if you want to access secret as a file     
+
+# env vars are immutable after pod start.
+# volumes allow file-based reading and dynamic config updates.
+
+# commands 
+
+# => kubectl apply -f 06-inject-cm-file.yaml
+# => kubectl exec -it my-pod -- /bin/sh
+# => cat /usr/share/props/application.properties  
 
