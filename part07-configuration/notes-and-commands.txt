@@ -4,9 +4,9 @@ Think of it as a way to separate your app’s configuration (like URLs, environm
 
 
 # commands 
-# => watch -t 'kubectl get pods && echo && kubectl get svc && echo && kubectl logs my-pod'
+# => watch -t 'kubectl get pods && echo && kubectl get svc && echo && kubectl logs my-pod && echo && kubectl get cm'
 
 # => kubectl apply -f 02-inject-cm.yaml  
 
-# => kubectl logs my-pod
+# => kubectl logs my-pod 
 
