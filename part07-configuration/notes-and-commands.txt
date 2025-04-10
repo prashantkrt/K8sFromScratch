@@ -2,3 +2,11 @@
 A ConfigMap is a key-value store used to inject configuration data into your Kubernetes pods and containers.
 Think of it as a way to separate your app’s configuration (like URLs, environment variables, feature flags) from the container image.
 
+
+# commands 
+# => watch -t 'kubectl get pods && echo && kubectl get svc && echo && kubectl logs my-pod'
+
+# => kubectl apply -f 02-inject-cm.yaml  
+
+# => kubectl logs my-pod
+
