@@ -26,7 +26,7 @@ spec:
 # Commands 
 # => kubectl apply -f 02-pod-pvc.yaml
 
-# =>   watch -t 'kubectl get sc && echo && kubectl get pv && echo && kubectl get pvc && echo && kubectl get pods'
+# => watch -t 'kubectl get sc && echo && kubectl get pv && echo && kubectl get pvc && echo && kubectl get pods'
 
 ## experimenting 
 
@@ -42,5 +42,39 @@ spec:
 # => check the output 
 # http://localhost:8080 
 
+# or 
+
+# => kubectl describe pv 
+
+# find the worker node where pv is created and also ge the path
+#  in my case  kubernetes.io/hostname in [dev-cluster-2-worker2] 
+#  /var/local-path-provisioner/pvc-fd926545-b01e-4a89-a54e-73e8a4e02905_default_my-pvc
+
+# docker ps 
+# docker exec -it dev-cluster-2-worker2 bash
+# cd /var/local-path-provisioner/pvc-fd926545-b01e-4a89-a54e-73e8a4e02905_default_my-pvc
+# echo 'Hello My Friend !!! How are U ? '' > index.html
+# exit 
+
+# kubeclt get pod
+# kubectl port-forward my-pod 8080:80 
+# http://localhost:8080
 
 
+# let delete the pod 
+# kubectl delete -f 02-pod-pvc.yaml
+
+
+# => kubeclt get pod ( nothing )
+
+# => kubectl get pvc 
+# NAME     STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+# my-pvc   Bound    pvc-fd926545-b01e-4a89-a54e-73e8a4e02905   5G         RWO            standard       <unset>                 70m
+# => kubectl get pv
+# NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM            STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE
+# pvc-fd926545-b01e-4a89-a54e-73e8a4e02905   5G         RWO            Delete           Bound    default/my-pvc   standard       <unset>     
+# we can see the pvc and pv both
+
+
+# delete the pvc , also pv will be delete since the reclaim policy set to delete 
+# => kubectl delete pvc my-pvc

@@ -124,3 +124,4 @@ In modern Kubernetes setups, dynamic provisioning is the standard and preferred 
 => kubectl get pv
 => kubectl get pvc
 => kubectl describe pvc my-pvc
+=> kubectl delete pvc my-pvc
