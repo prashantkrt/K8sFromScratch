@@ -26,26 +26,7 @@ spec:
 # Commands 
 # => kubectl apply -f 02-pod-pvc.yaml
 
-
-## =>   watch -t 'kubectl get sc && echo && kubectl get pv && echo && kubectl get pvc && echo && kubectl get pods'
-
-# NAME                 PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
-# standard (default)   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  3d5h
-
-# NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM            STORAGECLA
-# SS   VOLUMEATTRIBUTESCLASS   REASON   AGE
-# pvc-fd926545-b01e-4a89-a54e-73e8a4e02905   5G         RWO            Delete           Bound    default/my-pvc   standard
-#      <unset>                          10m
-
-# NAME     STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLAS
-# S   AGE
-# my-pvc   Bound    pvc-fd926545-b01e-4a89-a54e-73e8a4e02905   5G         RWO            standard       <unset>
-#     45m
-
-# NAME     READY   STATUS    RESTARTS   AGE
-# my-pod   1/1     Running   0          10m
-
-
+# =>   watch -t 'kubectl get sc && echo && kubectl get pv && echo && kubectl get pvc && echo && kubectl get pods'
 
 ## experimenting 
 
