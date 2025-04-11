@@ -1,10 +1,11 @@
 apiVersion: v1 
+kind: Pod
 metadata: 
   name: my-pod
   labels: 
    app: version1
 spec: 
- terminationGracePeriod: 0
+ terminationGracePeriodSeconds: 0
  restartPolicy: Never
  containers: 
   - name: nginx
@@ -14,13 +15,51 @@ spec:
        containerPort: 80
        protocol: TCP
     volumeMounts: 
-      - name : my-pod-mounted-vol
-        path: /usr/share/nginx/html
+      - name : my-pod-vol # should be same as the volumes ** - name : my-pod-vol
+        mountPath: /usr/share/nginx/html
  volumes: 
   - name : my-pod-vol
-    PersistentVolumeClaim: 
+    persistentVolumeClaim: 
      claimName:  my-pvc
 
 
 # Commands 
 # => kubectl apply -f 02-pod-pvc.yaml
+
+
+## =>   watch -t 'kubectl get sc && echo && kubectl get pv && echo && kubectl get pvc && echo && kubectl get pods'
+
+# NAME                 PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+# standard (default)   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  3d5h
+
+# NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM            STORAGECLA
+# SS   VOLUMEATTRIBUTESCLASS   REASON   AGE
+# pvc-fd926545-b01e-4a89-a54e-73e8a4e02905   5G         RWO            Delete           Bound    default/my-pvc   standard
+#      <unset>                          10m
+
+# NAME     STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLAS
+# S   AGE
+# my-pvc   Bound    pvc-fd926545-b01e-4a89-a54e-73e8a4e02905   5G         RWO            standard       <unset>
+#     45m
+
+# NAME     READY   STATUS    RESTARTS   AGE
+# my-pod   1/1     Running   0          10m
+
+
+
+## experimenting 
+
+# => kubectl exec -it my-pod -- bin/bash
+# => cd /usr/share/nginx/html
+
+# create a file in this location asd index.html
+# => echo 'Hello World '> index.html
+# => exit 
+
+# => kubectl port-forward my-pod 8080:80 
+
+# => check the output 
+# http://localhost:8080 
+
+
+

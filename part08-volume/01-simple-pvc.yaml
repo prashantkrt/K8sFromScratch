@@ -10,6 +10,9 @@ spec:
   requests: 
     storage: 5G  # or 5Gi 
 
+# reclaimPolicy is set on the PersistentVolume (PV) or StorageClass not on PVC
+# delete , retain and recycle 
+
 # Access Modes 
 # ReadWriteOnce  => Read and Write operation once per node . One node can read AND write to the volume. It is common to a Node with Multiple pod
 # ReadWroteOncePod => Read and Write operation once per pod, each pod uses its own PVC, It is great when you want to strictly isolate volume usage per pod.

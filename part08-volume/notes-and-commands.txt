@@ -102,7 +102,7 @@ In modern Kubernetes setups, dynamic provisioning is the standard and preferred 
 ## 5 The new PV is bound to the PVC.
 
 |-------------------------------------------------------------------------------------------------|
-| Feature                          | Static Provisioning        | Dynamic Provisioning (Preferred)|        |
+| Feature                          | Static Provisioning        | Dynamic Provisioning (Preferred)|        
 --------------------------------------------------------------------------------------------------|
 | PV Creation                      | Manual by Admin            | Automatically Provisioned       |
 | PVC to PV Binding                | Implicit Matching          | Automatic Binding               |
@@ -118,6 +118,7 @@ In modern Kubernetes setups, dynamic provisioning is the standard and preferred 
 
 
 ## commands
+=> Kubectl get all
 => watch -t 'kubectl get sc && echo && kubectl get pv && echo && kubectl get pvc && echo && kubectl get pods'
 => kubetctl get sc 
 => kubectl get pv
