@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: 
+ name: my-pvc
+spec: 
+ storageClassName: standard  # its by default to local we can ignore it also 
+ accessModes:
+  - ReadWriteOnce   # Read and Write operation once per node 
+ resources: 
+  requests: 
+    storage: 5G  # or 5Gi 
+
+# Access Modes 
+# ReadWriteOnce  => Read and Write operation once per node . One node can read AND write to the volume. It is common to a Node with Multiple pod
+# ReadWroteOncePod => Read and Write operation once per pod, each pod uses its own PVC, It is great when you want to strictly isolate volume usage per pod.
+# ReadOnlyMany =>  Many pods across many nodes can read the volume, but NONE can write.
+# ReadWriteMany =>  Multiple pods across multiple nodes can read AND write to the volume at the same time.
+
+
+# basic structure
+
+# apiVersion 
+# metadata
+# spec
+#  accessModes ( takes array)
+#  resources
+#   requests
+#    storage
+
+# 1. Pod → asks for storage via a PVC  
+# 2. PVC → refers to a StorageClass (SC)  
+# 3. SC → tells Kubernetes how to dynamically create a PV  
+# 4. PV → is created and bound to the PVC  
+# 5. Pod → gets the storage via the PVC
+
+# PVC --> SC --> PV --> Pod uses PVC    
+
+## commands Used 
+# => kubectl delete all --all
+# => kubectl get pods
+# => kubectl delete all --all
+# => kubecle apply -f 01-simple-pvc.yaml
+# => kubectl get pv 
+# => kubectl get pvc

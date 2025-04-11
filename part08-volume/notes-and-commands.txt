@@ -1,0 +1,125 @@
+In Kubernetes, pods are ephemeral, meaning their file system gets destroyed when they’re terminated or rescheduled. For stateful applications (like databases),
+We need persistent storage that survives beyond the pod's lifecycle.
+Kubernetes provides Persistent Volumes (PV), Persistent Volume Claims (PVC), and Storage Classes to manage persistent storage in a decoupled and flexible way.
+
+Remember 
+
+## Remember the flow 
+1. Pod → asks for storage via a PVC  
+2. PVC → refers to a StorageClass (SC)  
+3. SC → tells Kubernetes how to dynamically create a PV  
+4. PV → is created and bound to the PVC  
+5. Pod → gets the storage via the PVC
+
+PVC --> SC --> PV --> Pod uses PVC 
+
+1. StorageClass : Blueprint for creating storage automatically. Tells Kubernetes how to create storage (disks) for your app when it needs one.
+2. PV (PersistentVolume) A piece of storage in the cluster (like a hard disk) , which Created statically (by admin) or dynamically (via StorageClass)
+3. PVC (PersistentVolumeClaim), A request for storage by a Pod which Specifies how much space is needed
+
+
+Storage Class 
+
+A StorageClass defines how Kubernetes should dynamically provision storage (like speed, type, IOPS).
+Different types are used for different workloads based on performance needs.
+
+StorageClass types like 
+## standard : 10000 iops (Input output operations per seconds)
+## fast : 50000 iops 
+## extreme: 200000 iops 
+
+standard → General purpose, default disk.
+fast → SSD or high-performance disk, better for speed-sensitive workloads.
+extreme → Very high-performance storage, used in high-load or critical data pipelines.
+
+
+StorageClass Name   Description                                          Example Use Case                  Typical IOPS
+------------------  --------------------------------------------------  --------------------------------  -------------
+standard            Normal-speed disk (default in most clusters)        General-purpose applications      ~10,000 IOPS
+fast                SSD-based, high IOPS storage                        Databases, latency-sensitive apps ~50,000 IOPS
+extreme             Ultra-fast or provisioned IOPS (e.g., NVMe, SSD)    High-performance apps, big data   ~2,00,000 IOPS
+
+=> Different Types SC by difernet provisioners such as 
+ - AWS EBS SSD 
+ - GCP PD SSD etc.. 
+
+## Each cloud provider has its own provisioner
+## StorageClass automates the creation of volumes based on that setup
+
+# No need to remember
+example : by aws 
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+  fsType: ext4
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer
+
+
+## for our local
+In local we have type as Standard and the provisioner as ancher.io/local-path means local disk
+=> kubectl get storageclass
+NAME                 PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+standard (default)   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  3d3h
+
+For the local Storage class details as below
+Use the command => Kubectl get storageClass or sc
+
+NAME => Name of the StorageClass. For my local it is standard, and it's the default.
+PROVISIONER	 => Who provisions the volume? Here: rancher.io/local-path means local disk
+RECLAIMPOLICY => What happens when the PVC is deleted? Delete removes the PV too.
+VOLUMEBINDINGMODE => When to bind the volume? WaitForFirstConsumer = only when a pod needs it.
+ALLOWVOLUMEEXPANSION => Can you increase size after creation? false = not allowed in this setup.
+AGE	 => How long ago this StorageClass was created.
+
+Based on the local SC , PV will be created and pod can use it via PVC
+StorageClass (local, named "standard")
+      ↓
+PVC (asks for storage, refers to SC "standard")
+      ↓
+PV (automatically created by SC)
+      ↓
+Pod (uses the storage via PVC)
+
+## Persistence Volume claim => A PersistentVolumeClaim is a request for storage by a user.
+Request to create PV. In simple term Resource which links PV and Pod.
+
+## Persistencr Volume =>  A physical storage volume in the cluster, provisioned either manually or dynamically.
+PV is the actual volume created for a specific storage class.
+
+Two ways to create the PV one static and second dynamically.
+
+## Dynamic Creation 
+In modern Kubernetes setups, dynamic provisioning is the standard and preferred approach for creating persistent volumes.
+## 1 When we create a PVC with a storageClassName.
+## 2 Kubernetes checks the associated StorageClass.
+## 3 The StorageClass has a provisioner, e.g., AWS EBS, CSI driver, etc.
+## 4 Kubernetes calls the provisioner, which automatically provisions a new PersistentVolume.
+## 5 The new PV is bound to the PVC.
+
+|-------------------------------------------------------------------------------------------------|
+| Feature                          | Static Provisioning        | Dynamic Provisioning (Preferred)|        |
+--------------------------------------------------------------------------------------------------|
+| PV Creation                      | Manual by Admin            | Automatically Provisioned       |
+| PVC to PV Binding                | Implicit Matching          | Automatic Binding               |
+| Flexibility                      | Less Flexible (shared PVs) | Highly Flexible (per pod)       |
+| Usability in Dynamic Environments| Tedious & Manual           | Scalable & Clean                |
+|-------------------------------------------------------------------------------------------------|
+
+# Access Modes 
+# ReadWriteOnce  => Read and Write operation once per node . One node can read AND write to the volume. It is common to a Node with Multiple pod
+# ReadWroteOncePod => Read and Write operation once per pod, each pod uses its own PVC, It is great when you want to strictly isolate volume usage per pod.
+# ReadOnlyMany =>  Many pods across many nodes can read the volume, but NONE can write.
+# ReadWriteMany =>  Multiple pods across multiple nodes can read AND write to the volume at the same time.
+
+
+## commands
+=> watch -t 'kubectl get sc && echo && kubectl get pv && echo && kubectl get pvc && echo && kubectl get pods'
+=> kubetctl get sc 
+=> kubectl get pv
+=> kubectl get pvc
+=> kubectl describe pvc my-pvc

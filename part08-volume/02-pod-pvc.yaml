@@ -1,0 +1,26 @@
+apiVersion: v1 
+metadata: 
+  name: my-pod
+  labels: 
+   app: version1
+spec: 
+ terminationGracePeriod: 0
+ restartPolicy: Never
+ containers: 
+  - name: nginx
+    image: nginx
+    ports: 
+     - name: my-pod-port
+       containerPort: 80
+       protocol: TCP
+    volumeMounts: 
+      - name : my-pod-mounted-vol
+        path: /usr/share/nginx/html
+ volumes: 
+  - name : my-pod-vol
+    PersistentVolumeClaim: 
+     claimName:  my-pvc
+
+
+# Commands 
+# => kubectl apply -f 02-pod-pvc.yaml
