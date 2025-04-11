@@ -24,7 +24,7 @@ A StorageClass defines how Kubernetes should dynamically provision storage (like
 Different types are used for different workloads based on performance needs.
 
 StorageClass types like 
-## standard : 10000 iops (Input output operations per seconds)
+## standard : 10000 iops (Input output operations per second)
 ## fast : 50000 iops 
 ## extreme: 200000 iops 
 

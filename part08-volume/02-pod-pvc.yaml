@@ -46,14 +46,14 @@ spec:
 
 # => kubectl describe pv 
 
-# find the worker node where pv is created and also ge the path
-#  in my case  kubernetes.io/hostname in [dev-cluster-2-worker2] 
+# find the worker node where pv is created and also get the path
+#  In my case  kubernetes.io/hostname in [dev-cluster-2-worker2] 
 #  /var/local-path-provisioner/pvc-fd926545-b01e-4a89-a54e-73e8a4e02905_default_my-pvc
 
 # docker ps 
 # docker exec -it dev-cluster-2-worker2 bash
 # cd /var/local-path-provisioner/pvc-fd926545-b01e-4a89-a54e-73e8a4e02905_default_my-pvc
-# echo 'Hello My Friend !!! How are U ? '' > index.html
+# echo 'Hello My Friend !!! How are U ?' > index.html
 # exit 
 
 # kubeclt get pod
