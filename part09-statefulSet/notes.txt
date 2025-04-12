@@ -1,0 +1,21 @@
+StatefulSet:
+  pod-0 -> volume-0
+  pod-1 -> volume-1
+  pod-2 -> volume-2
+
+Basically each pod will have its own PV   
+Each pod remembers who it is and has its own volume — even after deletion or rescheduling.
+
+Pods are usually stateless.
+If you use a PersistentVolume (PV) via a PVC, it can be:
+Shared between pods (if access mode allows).
+Or not used at all if the app doesn’t need it.
+All pods share the same volume if they mount the same PVC.
+
+In a StatefulSet:
+Each pod gets its own unique PersistentVolume (PV).
+Kubernetes automatically creates one PVC per pod using a volumeClaimTemplates.
+That PVC is then backed by a unique PV, so:
+pod-0 --> pvc-0 --> pv-0
+pod-1 --> pvc-1 --> pv-1
+pod-2 --> pvc-2 --> pv-2

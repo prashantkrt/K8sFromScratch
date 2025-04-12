@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: my-ss
+spec:
+  selector:
+    matchLabels:
+      app: my-app
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      terminationGracePeriodSeconds: 1
+      containers:
+      - name: nginx
+        image: nginx
+        ports: 
+         - name: my-ss-port
+           containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: my-app
+  ports:
+  - port: 8080
+    targetPort: 80
+
+---
+
+# will make the curl request to service which is using clusterIP 
+# => kubectl exec -it my-pod -- /bin/sh
+
+# => curl my-service:8080
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  terminationGracePeriodSeconds: 1
+  containers:
+  - name: curl
+    image: curlimages/curl
+    command: ["sleep", "3600"]
+
+# Deployment: Same PVC (shared storage) or no storage → good for stateless apps.
+# StatefulSet: Unique PVC → good for stateful apps like databases.
+
+# StatefulSet:
+#   pod-0 -> volume-0
+#   pod-1 -> volume-1
+#   pod-2 -> volume-2
+
+# kubectl apply -f 02-simple-ss.yaml
+# kubectl get statefulsets
+# kubectl get sts
+# kubectl describe statefulset <statefulset-name>
+# kubectl describe statefulset my-ss

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: my-ss
+spec:
+  selector:
+    matchLabels:
+      app: my-app
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+
+
+# Deployment: Same PVC (shared storage) or no storage → good for stateless apps.
+# StatefulSet: Unique PVC → good for stateful apps like databases.
+
+# StatefulSet:
+#   pod-0 -> volume-0
+#   pod-1 -> volume-1
+#   pod-2 -> volume-2        
