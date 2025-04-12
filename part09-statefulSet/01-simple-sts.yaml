@@ -15,7 +15,8 @@ spec:
       containers:
       - name: nginx
         image: nginx
-
+        
+# StatefulSets do not support kubectl rollout or kubectl rollout undo like Deployments do
 # Will br created one by one not at a time all will be created like in case of deployment       
 # pod/my-ss-0   1/1     Running   0          159m
 # pod/my-ss-1   1/1     Running   0          159m

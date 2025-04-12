@@ -19,3 +19,5 @@ That PVC is then backed by a unique PV, so:
 pod-0 --> pvc-0 --> pv-0
 pod-1 --> pvc-1 --> pv-1
 pod-2 --> pvc-2 --> pv-2
+
+## StatefulSets do not support kubectl rollout or kubectl rollout undo like Deployments do
