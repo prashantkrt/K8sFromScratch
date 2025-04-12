@@ -36,10 +36,10 @@ spec:
             - "-c"
             - 'echo "$(hostname)</br>" >> /usr/share/nginx/html/index.html'  
           initialDelaySeconds: 10 # time to wait before starting the probe
-          periodSeconds: 10 # time between probes 
+          periodSeconds: 20 # time between probes 
           timeoutSeconds: 1 # time to wait for a response
           successThreshold: 1 # number of successful probes before considering the container started
-          failureThreshold: 30 # number of failed probes before considering the container failed       
+          failureThreshold: 50 # number of failed probes before considering the container failed       
         volumeMounts:
         - name: pod-volume
           mountPath: /usr/share/nginx/html
@@ -60,15 +60,63 @@ spec:
 # Second Line
 # > overwrites the file but >> appends (adds) to it.
 
-
-
 ##  commands 
 # => watch -t kubectl get all
-
 # => kubectl delete all --all
-
 # => kubectl apply -f 03-deployment-pvc.yaml
 
 # => kubectl describe deploy/my-deploy
 # => kubecrl describe pod 
-# Startup:        exec [/bin/sh -c echo "$(hostname)</br>" >> /usr/share/nginx/html/index.html] delay=10s timeout=1s period=10s #success=1 #failure=30
+# Startup: exec [/bin/sh -c echo "$(hostname)</br>" >> /usr/share/nginx/html/index.html] delay=10s timeout=1s period=10s #success=1 #failure=30
+
+
+## lets verigy the index.html file which we have appended 
+# kubectl get pvc 
+# kubectl get pv =>  pvc-18fad479-f230-4525-9192-9f1acd905ca4
+# kubeclt descrive pv => we will ge the kubernetes.io/hostname in [dev-cluster-2-worker]
+
+# docker ps 
+# docker exec -it dev-cluster-2-worker bin/bash 
+# cd /var/local-path-provisioner
+# cd pvc-18fad479-f230-4525-9192-9f1acd905ca4_default_my-pvc
+# cat index.html
+
+## result as below since I have useds this space multiple times while making the changes a=on my yaml and re applied so diff pods created again 
+# my-deploy-7dcf9bfd7b-ckpqv</br>
+# my-deploy-7dcf9bfd7b-zl4s7</br>
+# my-deploy-7dcf9bfd7b-cxnd7</br>
+# my-deploy-68d7bc7d75-hctdk</br>
+# my-deploy-68d7bc7d75-dm56z</br>
+# my-deploy-68d7bc7d75-6bcbv</br>
+# my-deploy-5884f4dd97-8s7xv</br>
+# my-deploy-5884f4dd97-lgjlz</br>
+# my-deploy-5884f4dd97-g5nvd</br>
+
+# Why More Than 3 Pods Are Seen?
+# 1. You reapplied the Deployment multiple times with changes
+# Every time you modify the Deployment (like changing startupProbe, etc.), Kubernetes creates a new ReplicaSet.
+# Old pods are terminated, but their traces remain in volumes like PVCs unless manually cleared.
+# That’s why index.html contains entries from current + previous pods.
+
+# lets say i wanted to reapply 
+# kubectl apply -f 03-deployment-pvc.yaml 
+## see I have made changes to startUpProbe 
+# pvc# cat index.html
+# my-deploy-7dcf9bfd7b-ckpqv</br>
+# my-deploy-7dcf9bfd7b-zl4s7</br>
+# my-deploy-7dcf9bfd7b-cxnd7</br>
+# my-deploy-68d7bc7d75-hctdk</br>
+# my-deploy-68d7bc7d75-dm56z</br>
+# my-deploy-68d7bc7d75-6bcbv</br>
+# my-deploy-5884f4dd97-8s7xv</br>
+# my-deploy-5884f4dd97-lgjlz</br>
+# my-deploy-5884f4dd97-g5nvd</br>
+# my-deploy-7775556dd6-m88mx</br>
+# my-deploy-7775556dd6-7lplq</br>
+# my-deploy-7775556dd6-ggsth</br>
+
+
+# also lets verify from pod as well 
+
+# kubectl port-forward deploy/my-deplo 8080:80
+# http://localhost:8080  
