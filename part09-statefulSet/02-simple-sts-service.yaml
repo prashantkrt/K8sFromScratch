@@ -16,9 +16,22 @@ spec:
       containers:
       - name: nginx
         image: nginx
+        command: ["/bin/sh"]
+        args: ["-c", "echo Pod Name: $(hostname) && echo Hostname: $(hostname) && nginx -g 'daemon off;'"]  # nginx -g 'daemon off;' else our nginx will stop in the backgrond
         ports: 
          - name: my-ss-port
            containerPort: 80
+
+# Remember this : )
+# If you run NGINX normally (without -g 'daemon off;') in a container, here's the key point:
+# NGINX starts, creates a child process to serve content like index.html.
+# But the main process exits because it's in daemon mode.
+# And since the container depends on the main process, Docker thinks:
+# "Oh, the main process exited — time to stop the container."
+# So even though NGINX is running in the background, the container dies.         
+# Docker runs a default entrypoint which is basically: nginx -g 'daemon off;'
+# Since we're writing your own custom Dockerfile based on another image.
+# So we override the default command: or entrypoint: in our YAML and forget to keep daemon off whihc will make the container close   
 
 ---
 
@@ -37,7 +50,6 @@ spec:
 
 # will make the curl request to service which is using clusterIP 
 # => kubectl exec -it my-pod -- /bin/sh
-
 # => curl my-service:8080
 
 apiVersion: v1
@@ -64,3 +76,19 @@ spec:
 # kubectl get sts
 # kubectl describe statefulset <statefulset-name>
 # kubectl describe statefulset my-ss
+
+
+# kubectl logs my-ss-0
+#   Pod Name: my-ss-0
+#   Hostname: my-ss-0
+
+
+# if we want to get out own index.html to give hostname and port 
+# - name: nginx
+#           image: nginx
+#           command: ["/bin/sh"]
+#           args:
+#             - "-c"
+#             - |
+#               echo "<h1>Pod Name: $HOSTNAME</h1><h2>Hostname: $HOSTNAME</h2>" > /usr/share/nginx/html/index.html && \
+#               nginx -g 'daemon off;'

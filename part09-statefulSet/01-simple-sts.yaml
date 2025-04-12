@@ -16,6 +16,10 @@ spec:
       - name: nginx
         image: nginx
 
+# Will br created one by one not at a time all will be created like in case of deployment       
+# pod/my-ss-0   1/1     Running   0          159m
+# pod/my-ss-1   1/1     Running   0          159m
+# pod/my-ss-2   1/1     Running   0          159m
 
 # Deployment: Same PVC (shared storage) or no storage → good for stateless apps.
 # StatefulSet: Unique PVC → good for stateful apps like databases.
@@ -24,3 +28,7 @@ spec:
 #   pod-0 -> volume-0
 #   pod-1 -> volume-1
 #   pod-2 -> volume-2        
+
+
+# kubectl delete pod my-ss-1 
+# same pod will be again created automatically with same name
