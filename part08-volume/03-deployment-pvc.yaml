@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-pvc
+spec:
+  storageClassName: standard
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deploy
+spec:
+  selector:
+    matchLabels:
+      app: my-app
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        startupProbe:
+          exec:
+            command:
+            - "/bin/sh"
+            - "-c"
+            - 'echo "$(hostname)</br>" >> /usr/share/nginx/html/index.html'  
+          initialDelaySeconds: 10 # time to wait before starting the probe
+          periodSeconds: 10 # time between probes 
+          timeoutSeconds: 1 # time to wait for a response
+          successThreshold: 1 # number of successful probes before considering the container started
+          failureThreshold: 30 # number of failed probes before considering the container failed       
+        volumeMounts:
+        - name: pod-volume
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: pod-volume
+        persistentVolumeClaim:
+          claimName: my-pvc        
+
+# 'echo "$(hostname)</br>" >> /usr/share/nginx/html/index.html' 
+# breaking down the above command one by one 
+# echo "Hello" will print hello
+# "$(hostname)</br>" will "nginx-pod-1234</br>" and  The </br> is an HTML line break — so it just means: "start a new line on the webpage."
+# >> it a append command in linux basically It adds the text to the end of a file and It does not erase what's already in the file.
+# echo "First Line" >> myfile.txt
+# echo "Second Line" >> myfile.txt
+# so my the myfile.txt will contain 
+# First Line
+# Second Line
+# > overwrites the file but >> appends (adds) to it.
+
+
+
+##  commands 
+# => watch -t kubectl get all
+
+# => kubectl delete all --all
+
+# => kubectl apply -f 03-deployment-pvc.yaml
+
+# => kubectl describe deploy/my-deploy
+# => kubecrl describe pod 
+# Startup:        exec [/bin/sh -c echo "$(hostname)</br>" >> /usr/share/nginx/html/index.html] delay=10s timeout=1s period=10s #success=1 #failure=30

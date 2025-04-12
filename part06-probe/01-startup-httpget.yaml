@@ -15,7 +15,12 @@ spec:
         timeoutSeconds: 1 # time to wait for a response
         successThreshold: 1 # number of successful probes before considering the container started
         failureThreshold: 3 # number of failed probes before considering the container failed
-       
+
+# Probe Type	Can you set successThreshold > 1?	Purpose
+# startupProbe	❌ No (must be 1)	To check if the container has started
+# livenessProbe	✅ Yes	To check if the container is alive
+# readinessProbe	✅ Yes	To check if the container is ready       
+
 # commands 
 
 # kubeclt detele all --all
