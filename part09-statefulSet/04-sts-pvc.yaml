@@ -40,12 +40,11 @@ spec:
 # => kubectl get pv    
 # NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                    STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE
 # pvc-0c557749-f6b7-41a6-8b3d-ec2d0bddf247   1G         RWO            Delete           Bound    default/my-pvc-my-ss-0   standard       <unset>                          21s
-# pvc-18fad479-f230-4525-9192-9f1acd905ca4   5Gi        RWO            Delete           Bound    default/my-pvc           standard       <unset>                          7h34m
+# pvc-3846bfbc-0fd4-49fc-a048-43e90ad46462   1G         RWO            Delete           Bound    default/my-pvc-my-ss-2   standard       <unset>                          1s
 # pvc-3846bfbc-0fd4-49fc-a048-43e90ad46462   1G         RWO            Delete           Bound    default/my-pvc-my-ss-1   standard       <unset>                          6s
 
 # => kubectl get pvc
 # NAME             STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
-# my-pvc           Bound    pvc-18fad479-f230-4525-9192-9f1acd905ca4   5Gi        RWO            standard       <unset>                 7h35m
 # my-pvc-my-ss-0   Bound    pvc-0c557749-f6b7-41a6-8b3d-ec2d0bddf247   1G         RWO            standard       <unset>                 52s
 # my-pvc-my-ss-1   Bound    pvc-3846bfbc-0fd4-49fc-a048-43e90ad46462   1G         RWO            standard       <unset>                 38s
 # my-pvc-my-ss-2   Bound    pvc-0f607624-dbb4-4c5c-b642-72247b01bc37   1G         RWO            standard       <unset>                 23s
