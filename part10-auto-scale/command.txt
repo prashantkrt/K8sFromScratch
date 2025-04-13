@@ -1,0 +1,7 @@
+# Linux Top Command
+# => docker run -it ubuntu 
+# => top
+
+# kubectl top 
+# kubectl top pod 
+# kubectl top node 
