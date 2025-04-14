@@ -1,7 +1,14 @@
-# Linux Top Command
+# Linux Top Command used 
 # => docker run -it ubuntu 
 # => top
 
-# kubectl top 
-# kubectl top pod 
-# kubectl top node 
+# => kubectl top 
+# => kubectl top pod ( we have to install metrics )
+# => kubectl top node ( we have to install metrics )
+
+# => kubectl apply -f resources/metrics-server.yaml 
+# => kubectl get deployment metrics-server -n kube-system 
+
+# now test once done with the installation
+# => kubectl top nodes
+# => kubectl top pods

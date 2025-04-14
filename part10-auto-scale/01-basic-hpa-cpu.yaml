@@ -1,0 +1,18 @@
+apiVersion: autoscaling/v2  # autoscaling/v1: supports only cpu based HPA
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ubuntu-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ubuntu-deployment
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50 # percentage

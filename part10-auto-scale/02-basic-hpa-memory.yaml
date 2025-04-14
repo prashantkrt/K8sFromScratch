@@ -1,0 +1,61 @@
+apiVersion: autoscaling/v2  # autoscaling/v1: supports only cpu based HPA
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ubuntu-hpa-memory
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ubuntu-deployment
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 60  # Target memory usage in percentage
+
+
+# HPA ignores limits, it only uses requests.memory to calculate averageUtilization.
+
+# example 1
+# Let’s say your Deployment has 3 pods and each pod has:        
+# resources:
+#   requests:
+#     memory: "200Mi"
+
+# Then HPA will try to keep:
+# Average usage across pods ≈ 60% of 200Mi
+# That’s around 120Mi per pod.
+# If actual memory usage goes above that, HPA will scale up the pods (up to the maxReplicas limit). If usage goes way below, it will scale down.
+
+
+
+# example 2 
+# resources:
+#   requests:
+#     memory: "128Mi"   will start scaling => 60% of 128Mi = 76.8Mi
+#   limits:
+#     memory: "256Mi"
+
+# requests.memory: 128Mi:
+# This is the baseline memory guaranteed for the pod.
+# Kubernetes schedules the pod assuming it needs at least 128Mi.
+
+# limits.memory: 256Mi:
+# The pod can use up to 256Mi of memory.
+# If it tries to use more, it gets OOMKilled (Out of Memory Error).
+
+# averageUtilization: 60 means:
+# Scale based on 60% of the memory request (128Mi)
+# So the target memory usage per pod = 60% of 128Mi = 76.8Mi
+
+# observations
+# If each pod consistently uses ~100Mi:
+# That's ~78% of 128Mi → above 60% → HPA scales up.
+
+# If pods drop to ~50Mi:
+# That’s ~39% of 128Mi → HPA may scale down.
+

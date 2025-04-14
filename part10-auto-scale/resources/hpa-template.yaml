@@ -1,0 +1,63 @@
+# format of the hpa from the kubernetes documents
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: [ ? ] 
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: [ ? ]
+  minReplicas: [ ? ]
+  maxReplicas: [ ? ]
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: [ ? ] # points to percentage of the cpu utilization
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: AverageValue
+        averageValue: [ ? ]    
+  behavior: 
+    scaleDown:
+      stabilizationWindowSeconds: [ ? ]    # slowly scale-down   
+
+# basic structure 
+#  apiVersion
+#  kind
+#  metadata
+#  spec
+#   scaleTargetRef
+#   minReplicas
+#   maxReplicas
+#   metrics:  [array]
+#   behavior 
+
+# Remember 
+
+# When requests are defined properly
+# can be used for cpu as well as memory
+
+# for cpu as well as for memory
+# target:
+#   type: Utilization
+#   averageUtilization: 60
+
+# When you want exact control or no requests set
+# can be used for cpu as well as for memeory
+
+# for cpu
+# target:
+#   type: AverageValue
+#   averageValue: "200m"
+
+# for memory
+# target:
+#   type: AverageValue
+#   averageValue: "300Mi"
