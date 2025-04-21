@@ -1,3 +1,4 @@
+# deployment monitor
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
@@ -8,7 +9,7 @@ spec:
     kind: Deployment
     name: my-deploy
   minReplicas: 1
-  maxReplicas: 3
+  maxReplicas: 10 
   metrics:
   - type: Resource
     resource:

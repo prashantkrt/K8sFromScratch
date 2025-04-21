@@ -13,6 +13,9 @@
 # => kubectl top pods
 
 
+# => kubectl delete pod -n kube-system -l k8s-app=metrics-server 
+# => kubectl logs -n kube-system deployment/metrics-server
+
 # no need to remember 
 apiVersion: v1
 kind: ServiceAccount

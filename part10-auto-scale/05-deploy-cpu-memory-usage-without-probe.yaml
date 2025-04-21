@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deploy
+spec:
+  selector:
+    matchLabels:
+      app: my-app
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        resources:
+          requests:
+            cpu: 10m
+            memory: 20Mi
+          limits:
+            cpu: 10m
+            memory: 20Mi    
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+ name: my-nginx
+ labels:
+  app: my-app-service
+spec: 
+ selector: 
+  app: my-app
+ ports:
+   - port: 80
+     name: my-service-port
+     targetPort: 80                       
+
+---
+# pod to send the request to the service 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+spec:
+  terminationGracePeriodSeconds: 1
+  containers:
+    - name: demo
+      image: vinsdocker/util # it has the curl and ab (apache benchmark for load testing) preinstalled
+      args: 
+       - "sleep"
+       - "3600"
+
+
+# => kubectl delete all --all
+
+# => watch -t kubectl get all
+
+# => kubectl apply -f 04-deploy-cpu-memory-usage-without-probe.yaml
+# => kubectl apply -f 03-hpa.yaml  
+# => kubectl top
+# => kubectl top pod 
+# => kubectl top node 
+
+# => kubectl delete -f 04-deploy-cpu-memory-usage-without-probe.yaml
+# => kubectl delete hpa my-hpa
+# => kubectl delete hpa my-app-hpa -n my-namespace ( or very specific optional)
+
+
+# going inside the demo pod 
+# kubectl exec -it nginx-pod -- /bin/bash
+# curl my-nginx:80
+
+
+
+# scenario
+# => kubectl apply -f 04-deploy-cpu-memory-usage-without-probe.yaml
+# => kubectl apply -f 03-hpa.yaml  
+
+# doing the load testing without probe 
+# => kubectl exec -it pod/nginx-pod  -- /bin/bash
+# => ab -n 20000 -c 5 http://my-nginx/
+
+# http://my-nginx/
+# This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
+# Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+# Licensed to The Apache Software Foundation, http://www.apache.org/
+
+# Benchmarking my-nginx (be patient)
+# apr_socket_recv: Connection refused (111)  ## see this without probe becase even pod is up but it is not ready to take the service
+# Total of 1412 requests completed

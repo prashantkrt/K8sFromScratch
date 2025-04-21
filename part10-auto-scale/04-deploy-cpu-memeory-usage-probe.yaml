@@ -1,0 +1,126 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-deploy
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+   - type: Resource
+     resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 15 # i wanted to do hpa based on the cpu 
+  #  - type: Resource
+  #    resource:
+  #       name: memory
+  #       target:
+  #         type: AverageValue
+  #         averageValue: 100Mi
+  behavior: 
+    scaleDown:
+      stabilizationWindowSeconds: 100 
+
+---
+# HPA takes control over the replicas field once it's applied.
+# will be automatically take over by the HPA and will be using min and max as per hpa
+# when we pply the HPA → It overrides the replicas setting based on metrics and minReplicas/maxReplicas.
+# HPA continues monitoring CPU/Memory and scales between 1 and 3 pods. It ignores that original replicas: 5.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deploy
+spec:
+  selector:
+    matchLabels:
+      app: my-app
+  replicas: 5
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        startupProbe: # super important to use probe 
+          httpGet:
+             path: /
+             port: 80
+          initialDelaySeconds: 0 
+          periodSeconds: 5 
+          timeoutSeconds: 1 
+          successThreshold: 1 
+          failureThreshold: 3 
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          periodSeconds: 5
+          failureThreshold: 3    
+        resources:
+          requests:
+            cpu: 10m
+            memory: 20Mi
+          limits:
+            cpu: 10m
+            memory: 20Mi                
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+ name: my-nginx
+ labels:
+  app: my-app-service
+spec: 
+ selector: 
+  app: my-app
+ ports:
+   - port: 80
+     name: my-service-port
+     targetPort: 80                       
+
+---
+# vinsdocker/util  installed apache bench for load testing
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+spec:
+  terminationGracePeriodSeconds: 1
+  containers:
+    - name: demo
+      image: vinsdocker/util  # curlimages/curl it has the curl pre-installed curlimages/curl
+      args: 
+       - "sleep"
+       - "3600"            
+
+
+
+# => kubectl apply -f 05-deploy-cpu-memeory-usage-probe.yaml 
+
+# => kubectl get hpa
+
+# => kubectl exec -it pod/nginx-pod  -- /bin/sh for curlimages/curl
+# => kubectl exec -it pod/nginx-pod  -- /bin/bash
+# => curl my-nginx:80
+
+# => ab
+# => ab -n 20000 -c 5 http://my-nginx/ ( almost 20000 req concurrent hitting 5 => 20000*5 == 100000 request)
+
+# NAME                                         REFERENCE              TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
+# horizontalpodautoscaler.autoscaling/my-hpa   Deployment/my-deploy   cpu: 25%/15%   1         3         3          42m
+
+# once my cpu load increased it will scale to higer number of pods 
+
+# NAME                                         REFERENCE              TARGETS        MINPODS   MAXPODS   REPLICAS   AGE
+# horizontalpodautoscaler.autoscaling/my-hpa   Deployment/my-deploy   cpu: 10%/15%   1         3         3          45m
+
+# once my cpu decreased it will scale down to lower number of pods 
