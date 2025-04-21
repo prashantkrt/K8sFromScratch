@@ -1,0 +1,38 @@
+# From the kind document for ingress
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: dev-cluster
+nodes:
+- role: control-plane
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "ingress-ready=true"
+  extraPortMappings:
+  - containerPort: 80
+    hostPort: 80
+    protocol: TCP
+  - containerPort: 31234 # for my nordport 
+    hostPort: 31234 # localhost port
+    protocol: TCP    
+  - containerPort: 443
+    hostPort: 443
+    protocol: TCP
+- role: worker
+- role: worker    
+
+# => kind delete cluster
+# => kind delete cluster --name dev-cluster
+# => kind get clusters
+# => kubectl get node
+
+
+# => kind create cluster --config 01-cluster/01-cluster.yaml 
+
+# install the ingress controller ( impl of ingress is by AWS, GCP and nginx)
+# => kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+
+# since we have deleted the cluster we have to add/install metric-server again
+# => kubectl apply -f 01-cluster/metrics-server.yaml 

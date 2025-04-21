@@ -15,3 +15,7 @@ nodes:
 
 
 # kind create cluster --config 02-cluster-port-mapping.yaml 
+
+# => kind delete cluster
+# => kind delete cluster --name dev-cluster-2
+# => kind get clusters
