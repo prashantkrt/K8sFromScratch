@@ -1,105 +1,117 @@
-apiVersion: apps/v1
-kind: Deployment
+# ---------------------- DEPLOYMENT: service-1 (Nginx) ----------------------
+
+apiVersion: apps/v1                     # API version for Deployment
+kind: Deployment                        # Kind: Deployment manages ReplicaSets and Pods
 metadata:
-  name: service-1
+  name: service-1                       # Name of the deployment
 spec:
-  replicas: 1
+  replicas: 2                           # Number of pod replicas
   selector:
     matchLabels:
-      app: nginx
+      app: nginx                        # Label to match Pods managed by this Deployment
   template:
     metadata:
       labels:
-        app: nginx
+        app: nginx                      # Label for the Pod; used by Service selector
     spec:
       containers:
-        - name: nginx
-          image: nginx
+        - name: nginx                   # Name of the container
+          image: nginx                  # Docker image used
           ports:
-            - containerPort: 80
+            - containerPort: 80         # Port exposed inside the container
 
 ---
+
+# ---------------------- SERVICE: service-1 (Nginx) ----------------------
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-1
+  name: nginx-service                   # match Ingress rule
 spec:
   selector:
-    app: nginx
+    app: nginx                         
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 80  # Maps to containerPort 80 in nginx
+      port: 80                          # Port exposed by the Service (for internal cluster access)
+      targetPort: 80                    # Maps to containerPort in Nginx Pod
 
 ---
+
+# ---------------------- DEPLOYMENT: service-2 (HTTP Echo) ----------------------
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: service-2
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      app: http-echo
+      app: http-echo                    # Selector label for the pods
   template:
     metadata:
       labels:
         app: http-echo
     spec:
       containers:
-        - name: http-echo
-          image: hashicorp/http-echo # HTTP server that simply returns a static message
-          args:
-            - "-text=Hello from HTTP Echo"
+        - name: my-image
+          image: vinsdocker/nginx-gke # will print the pod and hostname     
           ports:
-            - containerPort: 80
+            - containerPort: 80         # Port exposed inside container
 ---
+
+# ---------------------- SERVICE: service-2 (HTTP Echo) ----------------------
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-2
+  name: http-echo-service              # match Ingress rule
 spec:
   selector:
-    app: http-echo
+    app: http-echo                     # Matches label in Pod
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 80  # Maps to containerPort 80 in http-echo
+      port: 80                         # Service port exposed in the cluster
+      targetPort: 80                   # Maps to containerPort in HTTP Echo Pod
 
 
+---
 
-# docker run hashicorp/http-echo -text="Hello A"
-# hashicorp/http-echo is a minimal HTTP server that simply returns a static message.
-# -text="Hello A" specifies the text to be returned as the response to any HTTP request.
-# containerPort: 80 exposes port 80 inside the container to handle incoming HTTP traffic.
+# ---------------------- INGRESS: Routing to Both Services ----------------------
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: simple-ingress
+  annotations:
+   nginx.ingress.kubernetes.io/rewrite-target: /   # If we want /nginx and /echo to map to / inside the container (strip the path prefix), do this:
 spec:
   rules:
-    - host: example.com
-      http:
+     - http:
         paths:
-          - path: /nginx
+          - path: /nginx               # Route for nginx
             pathType: Prefix
             backend:
               service:
-                name: nginx-service
+                name: nginx-service    # Match the service name for nginx
                 port:
-                  number: 80
-          - path: /echo
+                  number: 80           # port: 80 is the port exposed by the Kubernetes Service, 
+          - path: /echo                # Route for http-echo
             pathType: Prefix
             backend:
               service:
-                name: http-echo-service
+                name: http-echo-service # match thet service name for http echo
                 port:
                   number: 80
 
-# Ingress: The ingress maps two paths (/nginx and /echo) to the respective services (nginx-service and http-echo-service).
-# Request http://example.com/nginx will go to the Nginx service.
-# Request http://example.com/echo will go to the HTTP Echo service.                  
+# => kubectl apply -f 03-deployment-ingress.yaml 
+
+# => kubectl get svc nginx-service
+# => kubectl get svc http-echo-service
+# => kubectl get pods -l app=nginx
+# => kubectl get pods -l app=http-echo
+
+# => curl localhost/nginx/ or http://localhost/nginx
+# => culr localhost/echo/ or http://localhost/echo
+

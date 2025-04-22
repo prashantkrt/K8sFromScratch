@@ -13,3 +13,11 @@ spec:
             name: my-app
             port:
               number: 80
+
+# => kubectl apply -f . 
+# => kubectl apply -f 01-simple-deployment.yaml
+# => kubectl apply -f 02-simple-ingress.yaml
+
+# we have exposed the pod to the outside world now we can access it direclty
+# => curl localhost  => <H1>Hello my-deploy-7bb459bcc8-gcjsr </H1>
+# => http://localhost:80
