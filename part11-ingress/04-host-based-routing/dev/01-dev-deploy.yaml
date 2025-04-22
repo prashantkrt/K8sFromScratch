@@ -1,0 +1,39 @@
+# This deployment will be deployed in the namespace dev with version v2
+
+# namespace dev having the same ingress rules as of qa
+# we will be using the host + path based rounting to diffentiate else ingress controller will take the ingress rule for any one of them and request will always be forwared to the same 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deploy
+  # namespace: dev
+spec:
+  selector:
+    matchLabels:
+      app: my-app
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      terminationGracePeriodSeconds: 1
+      containers:
+      - name: nginx
+        image: vinsdocker/k8s-app:v2 # wanted to deploy dev with version v2
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-app
+spec:
+  selector:
+    app: my-app
+  ports:
+  - port: 80
+    targetPort: 80
+
+

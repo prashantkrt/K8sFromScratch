@@ -1,0 +1,44 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+spec:
+  rules:
+  - host: "dev.myapp.com" 
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend: 
+          service:
+            name: my-app
+            port:
+              number: 80
+
+
+# => kubectl create ns dev
+# => kubectl create ns qa 
+  
+# => kubectl delete ingress my-ingress -n default
+# => kubectl delete all -n dev --all
+
+# => kubectl apply -f . -n dev 
+
+# since I donot own any domain I will be simulate it by updating /etc/hosts
+# sudo nano /etc/hosts
+# 127.0.0.1    dev.myapp.com
+# 127.0.0.1    qa.myapp.com
+
+# => http://dev.myapp.com
+# => http://qa.myapp.com
+
+
+# => kubectl delete ns dev
+# => kubectl delete ns qa
+
+# for reference 
+# => kubectl create namespace dev          # only needed once
+# => kubectl apply -f . -n dev             # applies all files to dev namespace
+# => kubectl get all -n dev                # check resources
+# => kubectl describe ingress my-ingress -n dev
+# => kubectl delete all -n dev --all
