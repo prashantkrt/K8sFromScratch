@@ -5,7 +5,7 @@ metadata:
 spec:
   rules:
   - http:
-      paths:
+      paths:   # will always check for closest or best match
       - path: /product
         pathType: Prefix
         backend: 
@@ -20,7 +20,7 @@ spec:
             name: user-service
             port:
               number: 80  
-      - path: /
+      - path: /   
         pathType: Prefix
         backend: 
           service:
@@ -31,6 +31,9 @@ spec:
 
 # cd to current dir
 # => kubectl apply -f .
+# curl localhost  or  http://localhost
 # curl localhost/product/ or http://localhost/product or http://localhost:80/product
 # curl localhost/user/ or http://localhost/user or http://localhost:80/user
 # curl localhost/home/ or http://localhost/home or http://localhost:80/home
+
+# kubectl delete all --all
