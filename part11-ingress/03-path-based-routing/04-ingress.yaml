@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /product
+        pathType: Prefix
+        backend: 
+          service:
+            name: product-service
+            port:
+              number: 80 
+      - path: /user
+        pathType: Prefix
+        backend: 
+          service:
+            name: user-service
+            port:
+              number: 80  
+      - path: /
+        pathType: Prefix
+        backend: 
+          service:
+            name: home-service
+            port:
+              number: 80     
+
+
+# cd to current dir
+# => kubectl apply -f .
+# curl localhost/product/ or http://localhost/product or http://localhost:80/product
+# curl localhost/user/ or http://localhost/user or http://localhost:80/user
+# curl localhost/home/ or http://localhost/home or http://localhost:80/home
